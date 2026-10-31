@@ -14,7 +14,8 @@
    "scaled_on_disk": false,
    "n_part_channels": 360,
    "max_centroid_gap_vs_x_times_k_px": 0.5216209428038212,
-   "within_1px": true
+   "within_1px": true,
+   "max_centroid_gap_vs_pixel_center_formula_px": 0.026696231333573905
   },
   "loader_output_shapes": {
    "image": [
@@ -49,7 +50,8 @@
    "scaled_on_disk": false,
    "n_part_channels": 360,
    "max_centroid_gap_vs_x_times_k_px": 1.037000029732809,
-   "within_1px": false
+   "within_1px": false,
+   "max_centroid_gap_vs_pixel_center_formula_px": 0.05896546345761067
   },
   "loader_output_shapes": {
    "image": [

@@ -2,6 +2,7 @@
 import csv
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -32,6 +33,16 @@ rows, eval_rows = {}, {}
 
 def log(msg):
     print(f"[probe {time.strftime('%F %T')}] {msg}", flush=True)
+
+
+def kill_group(proc):
+    """os._exit 뒤 남은 DataLoader 작업자가 GPU 메모리를 잡고 있으므로 프로세스 그룹째 정리한다."""
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        return
+    proc.wait()
+    time.sleep(3)
 
 
 def wait_idle():
@@ -89,10 +100,12 @@ def run(key, backend, task_args, timeout=3600):
     t0 = time.time()
     log(f"시작 {key}")
     with open(LOG / f"{key}.log", "w") as f:
+        proc = subprocess.Popen(cmd, cwd=str(ROOT / "runs" / "stage0"), env=env, stdout=f, stderr=subprocess.STDOUT, start_new_session=True)
         try:
-            rc = subprocess.run(cmd, cwd=str(ROOT / "runs" / "stage0"), env=env, stdout=f, stderr=subprocess.STDOUT, timeout=timeout).returncode
+            rc = proc.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             rc = -1
+        kill_group(proc)
     dmon.terminate()
     dmon.wait()
     if rc == EXIT_GUARD or (ROOT / "logs" / "GUARD_VIOLATION").exists():
@@ -171,7 +184,7 @@ def search_max(backend, scale, a_ok):
     else:
         lo, hi = None, RECIPE
     if not a_ok:
-        cand = k
+        cand = k * 2  # K장 배치는 ID가 하나뿐이라 triplet loss를 계산할 수 없다(KPR는 TypeError). 하한은 2K다.
         if not trial(cand):
             return None
         lo = cand

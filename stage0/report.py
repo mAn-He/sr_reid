@@ -32,7 +32,7 @@ def pick(rows, backend, scale, setting, batch=None):
 
 
 def linear_vram(rows, backend, scale):
-    """맞은 배치들의 allocated로 선형 적합해 배치 64를 외삽한다. 점이 하나면 비례로 계산한다."""
+    """맞은 배치들의 reserved로 선을 그어 배치 64를 외삽한다. 점이 하나면 비례로 계산한다."""
     pts = sorted({(int(r["batch"]), num(r["max_memory_reserved_gb"])) for r in rows if r["backend"] == backend and r["scale"] == str(scale)
                   and r["setting"] in ("B", "B_trial") and r["status"] == "ok" and r["ckpt"] == "False" and num(r["max_memory_reserved_gb"])})
     if not pts:
@@ -56,7 +56,7 @@ def verdict(rows, backend, scale):
         v = f"4090 가능(checkpointing, 속도 −{s:.0f}%)" if s is not None else "4090 가능(checkpointing, 속도 저하율 미측정)"
     else:
         need = linear_vram(rows, backend, scale)
-        v = f"4090 불가, 필요 VRAM 추정치 {need:.1f}GB (최대 배치 측정값의 선형 외삽)" if need else "4090 불가, VRAM 추정 불가(맞는 배치 없음)"
+        v = f"4090 불가, 필요 VRAM 추정치 {need:.1f}GiB (최대 배치 측정값의 선형 외삽)" if need else "4090 불가, VRAM 추정 불가(맞는 배치 없음)"
     used = c if a["status"] == "oom" and c and c["status"] == "ok" else a
     if used["bottleneck_flag"] == "True":
         v += " · CPU/데이터 로딩 병목 의심"
@@ -95,6 +95,54 @@ def train_hours(rows, ev, backend, scale):
     return seconds / 3600, (N_EVAL / img_s + dist[0]) / 3600, basis
 
 
+def resolved(key):
+    """실패 기록은 지우지 않는다. 같은 측정을 고친 뒤 다시 돌려 끝났으면 그 사실을 함께 적는다."""
+    if key.endswith("_train_b4_w3m7") or key.endswith("_B"):
+        return " (배치 4는 ID가 하나뿐이라 triplet loss 불가. 탐색 하한을 8로 고쳐 다시 탐색함)"
+    p = ROOT / "runs" / "stage0" / "probe" / f"{key}.json"
+    status = json.loads(p.read_text()).get("status") if p.exists() else None
+    return f" (수정 후 재측정 결과: {status})" if status in ("ok", "oom") else " (재측정으로 해결되지 않음)"
+
+
+def ckpt_equiv():
+    """off를 두 번 돌린 차이를 잡음 기준으로 같이 적는다. on/off 차이가 그보다 크면 그대로 드러낸다."""
+    lines = ["| 모델 | 입력 | loss on/off 차이 | grad norm off | grad norm on/off 차이 | 같은 설정 반복 차이 |", "|---|---|---:|---:|---:|---:|"]
+    found = False
+    for b in BACKENDS:
+        for s in SCALES:
+            p = R / f"stage0_ckpt_equiv_{b}_x{s}.json"
+            if p.exists():
+                e = json.loads(p.read_text())
+                found = True
+                lines.append(f"| {NAMES[b]} | {128 * s}×{64 * s} | {e['loss_diff_on_off']} | {e['off']['grad_norm']:.2f} | {e['grad_norm_diff_on_off']:.3f} | {e['grad_norm_diff_noise']:.3f} |")
+    return lines if found else ["검사 대상 없음"]
+
+
+def reference_time(rows, backend, scale):
+    """레시피 배치가 안 맞는 칸의 참고값. 최대 배치 속도로 계산하며 Stage 2 합계에는 넣지 않는다."""
+    a = pick(rows, backend, scale, "A")
+    cands = [r for r in rows if r["backend"] == backend and r["scale"] == str(scale) and r["setting"] == "B" and r["status"] == "ok"]
+    if not (a and a["status"] == "oom" and cands):
+        return None
+    r = max(cands, key=lambda x: int(x["batch"]))
+    iters, its = num(r["iters_per_epoch"]), num(r["it_s"])
+    line = f"- {NAMES[backend]} {128 * scale}×{64 * scale}: 배치 {r['batch']}, {int(iters)}×{int(num(r['epochs']))}÷{its:.2f} = 학습 {iters * num(r['epochs']) / its / 3600:.2f}시간 (배치를 바꾼 조건이라 레시피와 다르고, 학습 결과가 같다는 뜻이 아닙니다)"
+    c = pick(rows, backend, scale, "C_at_max_batch")
+    if c and c["status"] == "ok":
+        line += f". 같은 배치에 checkpointing을 켜면 allocated {fmt(c['max_memory_allocated_gb'])}GiB, {fmt(c['it_s'])} it/s입니다"
+    return line
+
+
+def pos_embed_log():
+    """CLIP-ReID ×3 위치 임베딩 보간 로그를 그대로 옮긴다."""
+    out = []
+    for p in sorted((ROOT / "logs" / "stage0" / "probe").glob("clipreid_x3_*.log")):
+        hits = [l.strip() for l in p.read_text(errors="replace").splitlines() if "Resized position embedding" in l or "Position embedding resize" in l]
+        if hits:
+            out.append(f"- `{p.name}`: " + " / ".join(dict.fromkeys(hits)))
+    return out or ["- CLIP-ReID ×3 로그에서 위치 임베딩 보간 메시지를 찾지 못했습니다."]
+
+
 def fmt(v, d=2):
     n = num(v)
     return f"{n:.{d}f}" if n is not None else "-"
@@ -106,7 +154,7 @@ def main():
     scale = json.loads((R / "stage0_scale_check.json").read_text()) if (R / "stage0_scale_check.json").exists() else None
     prov = json.loads((R / "stage0_provenance.json").read_text()) if (R / "stage0_provenance.json").exists() else {}
     L = ["# Stage 0: RTX 4090 실행 가능 범위 실측", "", "학습이 아니라 측정입니다. test 이미지는 읽지 않았습니다. 크기 표기는 H×W입니다.", ""]
-    L += ["## 1. 모델·배율별 판정", "", "| 모델 | 입력 | 판정 | 레시피 배치 | AMP | 옵티마이저 | allocated GB | reserved GB | nvidia-smi 피크 GB | it/s | img/s | GPU 사용률 % |",
+    L += ["## 1. 모델·배율별 판정", "", "| 모델 | 입력 | 판정 | 레시피 배치 | AMP | 옵티마이저 | allocated GiB | reserved GiB | nvidia-smi 피크 GiB | it/s | img/s | GPU 사용률 % |",
           "|---|---|---|---:|---|---|---:|---:|---:|---:|---:|---:|"]
     for b in BACKENDS:
         for s in SCALES:
@@ -114,8 +162,11 @@ def main():
             L.append(f"| {NAMES[b]} | {128 * s}×{64 * s} | {verdict(rows, b, s)} | {a.get('recipe_batch', '-')} | {a.get('amp', '-')} | {a.get('optimizer', '-')} | "
                      f"{fmt(a.get('max_memory_allocated_gb'))} | {fmt(a.get('max_memory_reserved_gb'))} | {fmt(a.get('nvidia_smi_peak_gb'))} | {fmt(a.get('it_s'))} | {fmt(a.get('img_s'), 1)} | {fmt(a.get('gpu_util_mean'), 0)} |")
     L += ["", "CLIP-ReID는 두 스테이지 중 이미지 인코더를 학습하는 stage 2의 값입니다. stage 1은 `results/stage0_probe.csv`의 `A_stage1` 행에 있습니다.", ""]
+    L += ["OOM 행의 메모리 값은 실패 직전까지의 피크입니다.", ""]
+    L += ["### checkpointing 등가성 (같은 seed, 같은 입력, 배치 8, 1스텝)", ""] + ckpt_equiv() + [""]
+    L += ["### CLIP-ReID ×3 위치 임베딩 보간 확인", ""] + pos_embed_log() + [""]
     L += ["## 2. KPR·KPR+SOLIDER 최대 배치", "", "정보용이며 채택안이 아닙니다. K=4의 배수만 탐색했습니다.", "",
-          "| 모델 | 입력 | 최대 배치 | allocated GB | reserved GB | it/s | img/s | 비고 |", "|---|---|---:|---:|---:|---:|---:|---|"]
+          "| 모델 | 입력 | 최대 배치 | allocated GiB | reserved GiB | it/s | img/s | 비고 |", "|---|---|---:|---:|---:|---:|---:|---|"]
     for b in ("kpr", "kpr_solider"):
         for s in SCALES:
             cands = [r for r in rows if r["backend"] == b and r["scale"] == str(s) and r["setting"] == "B" and r["status"] == "ok"]
@@ -138,11 +189,18 @@ def main():
     L += ["", f"**Stage 2 전체(칸당 {{bicubic + SR 2종}} × seed 3 = 9회, 총 72회): 측정된 칸 합계 {total:.1f} GPU 시간 ({total / 24:.1f}일)**"
           + (f". 값이 없어 제외한 칸: {', '.join(missing)}." if missing else "."),
           "한 번에 한 작업만 돌린다고 가정했으며 SR 생성 시간은 포함하지 않았습니다.", ""]
+    refs = [x for x in (reference_time(rows, b, s) for b in BACKENDS for s in SCALES) if x]
+    if refs:
+        L += ["레시피 배치가 맞지 않는 칸의 참고값입니다. 위 합계에 넣지 않았습니다.", ""] + refs + [""]
     L += ["### 평가 메모리 요약", "", "상세는 `results/stage0_eval_mem.csv`입니다.", "",
-          "| 모델 | 항목 | 장치 | 블록/배치 | allocated GB | RSS GB | 초 | img/s | 전체 대비 최대 절대 오차 |", "|---|---|---|---:|---:|---:|---:|---:|---:|"]
+          "OOM 행의 메모리와 시간은 실패 시점까지의 값입니다.", "",
+          "| 모델 | 항목 | 장치 | 블록/배치 | 상태 | allocated GiB | RSS GiB | 초 | img/s | 전체 대비 최대 절대 오차 |", "|---|---|---|---:|---|---:|---:|---:|---:|---:|"]
     for r in ev:
-        L.append(f"| {NAMES.get(r['backend'], r['backend'])} | {r['task']}{'×' + r['scale'] if r['scale'] else ''} | {r['device']} | {r['block'] or r['batch']} | {fmt(r['max_memory_allocated_gb'])} | "
+        L.append(f"| {NAMES.get(r['backend'], r['backend'])} | {r['task']}{'×' + r['scale'] if r['scale'] else ''} | {r['device']} | {r['block'] or r['batch']} | {r['status']} | {fmt(r['max_memory_allocated_gb'])} | "
                  f"{fmt(r['max_rss_gb'])} | {fmt(r['seconds'], 1)} | {fmt(r['img_s'], 1)} | {r['max_abs_error_vs_full'] or '-'} |")
+    if any(r["backend"].startswith("kpr") and r["task"] == "dist" and num(r["max_abs_error_vs_full"]) for r in ev):
+        L += ["", "**KPR 거리는 블록 분할 결과가 전체 계산과 일치하지 않습니다.** 원인은 공식 함수(`torchreid/metrics/distance.py`)입니다. 공동으로 보이는 파트가 없는 쌍에 `블록 내 최댓값 + 1`을 넣기 때문에 그 값이 블록마다 달라집니다. "
+              "CPU 소규모 재현(query 512, gallery 3,000, 블록 128)에서 공동 파트가 있는 쌍의 오차는 0.0, 없는 쌍의 오차만 최대 0.0246이었고, query 512개 모두 gallery 정렬 순서가 같았습니다. 이 소규모 재현은 무작위 특징과 무작위 가시성 기준이며, 실제 특징으로 확인한 것은 아닙니다."]
     L += ["", "## 4. 키포인트·마스크 스케일 검증", ""]
     if scale:
         L.append(f"전체 통과 여부: **{scale['passed']}** (`results/stage0_scale_check.json`). 원본 {scale['n_samples']}장 기준입니다.")
@@ -161,9 +219,15 @@ def main():
              "CLIP-ReID는 README의 torch 1.8 + CUDA 10.2가 RTX 4090을 지원하지 않아 torch 1.13.0 cu117로 쟀습니다. BoT는 파일럿과 같은 torch 2.1.2입니다.",
              "데이터 로더는 네트워크 볼륨(MooseFS)에서 읽습니다. 로컬 디스크로 옮기면 병목 표시와 it/s가 달라질 수 있습니다.",
              "평가 메모리의 거리 계산은 무작위 특징으로 쟀습니다. 실제 특징이어도 메모리는 같지만 시간은 조금 다를 수 있습니다. KPR 추출은 train 이미지로 쟀습니다."]
+    notes += ["×2 특징 추출(배치 128)은 지시 항목이 아니며, 학습 1회 시간 외삽에 필요해서 추가로 쟀습니다.",
+              "KPR 계열 ×3 특징 추출은 배치 128과 256 모두 OOM이라 ×3 추출 속도와 평가 시간이 없습니다. 공식 평가 경로와 같이 autocast 없이 쟀습니다. 더 작은 배치는 지시에 없어 재지 않았습니다.",
+              "최대 배치 탐색에서 배치 4는 ID가 하나뿐이라 재지 못합니다. 하한은 8입니다.",
+              "Swin ImageNet-22k 가중치는 KPR Google Drive에 없어 Microsoft 공식 릴리스에서 받았습니다.",
+              "KPR 주석 zip에는 query, test 주석도 들어 있습니다. train 주석만 추출했고 zip은 chmod 000으로 잠갔습니다. 이미지는 들어 있지 않습니다."]
     miss = prov.get("missing") or []
     notes += [f"가중치 확보 실패: {m}" for m in miss]
-    notes += [f"측정 실패 기록: {f['key']}: {f['reason'][:300]}" for f in fails]
+    notes.append("CLIP-ReID 공식 yml의 `DATASETS:`는 값이 전부 주석이라 yacs가 거부합니다. 저장소는 수정하지 않고 실행 시 그 키만 빼고 병합했으며, 나머지 값은 yml 그대로입니다.")
+    notes += [f"측정 실패 기록: {f['key']}{resolved(f['key'])}: {f['reason'][:300]}" for f in fails]
     if not rows:
         notes.insert(0, "측정 결과 CSV가 없습니다.")
     L += [f"- {n}" for n in notes]

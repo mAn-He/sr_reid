@@ -171,7 +171,10 @@ class ClipBackend:
 
         clip._download = lambda url, root=None: str(W / "ViT-B-16.pt")  # 저장소 수정 없이 기록된 가중치를 쓴다.
         h, w = size_of(scale)
-        cfg.merge_from_file(str(CLIP_REPO / "configs" / "person" / "vit_clipreid.yml"))
+        with open(CLIP_REPO / "configs" / "person" / "vit_clipreid.yml") as f:
+            recipe = type(cfg).load_cfg(f)
+        del recipe["DATASETS"]  # 공식 yml의 빈 키(값이 전부 주석)는 yacs가 거부한다. 데이터셋은 아래에서 지정한다.
+        cfg.merge_from_other_cfg(recipe)
         cfg.merge_from_list(["INPUT.SIZE_TRAIN", [h, w], "INPUT.SIZE_TEST", [h, w], "DATASETS.NAMES", "market1501",
                              "SOLVER.STAGE2.IMS_PER_BATCH", batch, "SOLVER.STAGE1.IMS_PER_BATCH", batch])
         cfg.freeze()

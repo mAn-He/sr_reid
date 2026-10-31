@@ -1,0 +1,4 @@
+preup_policy,n_methods,rho_psnr_map,rho_ssim_map,rho_neg_lpips_map,rho_lr_psnr_map,rho_id_cos_map
+official,5,-0.3,0.6,0.7999999999999999,-0.09999999999999999,0.6
+native,5,0.7,0.7,0.09999999999999999,0.7,0.7
+fixed8x,5,-0.3,0.6,0.8999999999999998,-0.09999999999999999,0.8999999999999998

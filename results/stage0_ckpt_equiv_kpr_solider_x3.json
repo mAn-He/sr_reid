@@ -1,0 +1,46 @@
+{
+ "status": "ok",
+ "args": {
+  "backend": "kpr_solider",
+  "scale": 3,
+  "batch": 8,
+  "task": "equiv",
+  "ckpt": false,
+  "warmup": 10,
+  "measure": 40,
+  "seed": 0,
+  "block": 0,
+  "device": "gpu",
+  "dim": 0,
+  "parts": 0,
+  "vis_dtype": "",
+  "ref": "",
+  "out": "/workspace/sr-reid/runs/stage0/probe/kpr_solider_x3_equiv.json"
+ },
+ "batch": 8,
+ "off": {
+  "loss": 22.660907745361328,
+  "grad_norm": 63010.40234375
+ },
+ "off2": {
+  "loss": 22.660907745361328,
+  "grad_norm": 63011.14453125
+ },
+ "on": {
+  "loss": 22.660907745361328,
+  "grad_norm": 63010.55859375
+ },
+ "loss_diff_on_off": 0.0,
+ "grad_norm_diff_on_off": 0.15625,
+ "loss_diff_noise": 0.0,
+ "grad_norm_diff_noise": 0.7421875,
+ "max_memory_allocated": 5411283456,
+ "max_memory_reserved": 5903482880,
+ "max_rss_kb": 9055804,
+ "wall_seconds": 148.8536093235016,
+ "start_used_mib": 1.0,
+ "nvidia_smi_peak_gb": 6.369140625,
+ "gpu_util_mean": null,
+ "util_samples": 0,
+ "exclusive_gpu": true
+}

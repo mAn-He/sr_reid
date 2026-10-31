@@ -1,0 +1,13 @@
+time,key,reason
+2026-10-31 06:01:41,clipreid_x2_train_b64_w10m40,"ValueError: Type mismatch (<class 'yacs.config.CfgNode'> vs. <class 'NoneType'>) with values (NAMES: market1501
+ROOT_DIR: ../data vs. None) for config key: DATASETS"
+2026-10-31 06:01:52,clipreid_x2_stage1_b64_w10m40,"ValueError: Type mismatch (<class 'yacs.config.CfgNode'> vs. <class 'NoneType'>) with values (NAMES: market1501
+ROOT_DIR: ../data vs. None) for config key: DATASETS"
+2026-10-31 06:02:02,clipreid_x3_train_b64_w10m40,"ValueError: Type mismatch (<class 'yacs.config.CfgNode'> vs. <class 'NoneType'>) with values (NAMES: market1501
+ROOT_DIR: ../data vs. None) for config key: DATASETS"
+2026-10-31 06:02:12,clipreid_x3_stage1_b64_w10m40,"ValueError: Type mismatch (<class 'yacs.config.CfgNode'> vs. <class 'NoneType'>) with values (NAMES: market1501
+ROOT_DIR: ../data vs. None) for config key: DATASETS"
+2026-10-31 06:36:00,kpr_x3_train_b4_w3m7,TypeError: cannot unpack non-iterable NoneType object
+2026-10-31 06:36:00,kpr_x3_B,시험 실패: TypeError: cannot unpack non-iterable NoneType object
+2026-10-31 07:04:19,kpr_solider_x3_train_b4_w3m7,TypeError: cannot unpack non-iterable NoneType object
+2026-10-31 07:04:19,kpr_solider_x3_B,시험 실패: TypeError: cannot unpack non-iterable NoneType object
