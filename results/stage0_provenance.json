@@ -1,0 +1,16 @@
+{
+ "commits": {
+  "CLIP-ReID": "eb1898b72c882875f478bebfc6d41644eece0a5d",
+  "keypoint_promptable_reidentification": "e3e6ee2ffb74fd86a39518ce9a25ff91fbd973fa"
+ },
+ "licenses": {
+  "CLIP-ReID": "MIT (third_party/CLIP-ReID/LICENSE)",
+  "keypoint_promptable_reidentification": "Hippocratic License HL3-LAW-MEDIA-MIL-SOC-SV"
+ },
+ "solider_license": "tinyvision/SOLIDER Apache-2.0 (저장소 LICENSE 기준)",
+ "kpr_annotation_zip": {
+  "gdrive_id": "13ZPsAqKEHfSbL9luHZAZ6tALc_pFgjH7",
+  "bytes": 1911198261
+ },
+ "missing": []
+}

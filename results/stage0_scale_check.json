@@ -1,0 +1,74 @@
+{
+ "n_samples": 10,
+ "x2": {
+  "keypoints": {
+   "max_err_vs_pixel_center_formula": 0.0,
+   "max_gap_vs_x_times_k": 0.5000000000000001,
+   "theoretical_gap_(k-1)/2": 0.5,
+   "max_confidence_change": 0.0
+  },
+  "masks": {
+   "stored_shapes": [
+    "(36, 17, 9)"
+   ],
+   "scaled_on_disk": false,
+   "n_part_channels": 360,
+   "max_centroid_gap_vs_x_times_k_px": 0.5216209428038212,
+   "within_1px": true
+  },
+  "loader_output_shapes": {
+   "image": [
+    3,
+    256,
+    128
+   ],
+   "target_masks": [
+    6,
+    64,
+    32
+   ],
+   "prompt_masks": [
+    8,
+    256,
+    128
+   ]
+  },
+  "loader_all_same_shape": true
+ },
+ "x3": {
+  "keypoints": {
+   "max_err_vs_pixel_center_formula": 0.0,
+   "max_gap_vs_x_times_k": 1.0000000000000036,
+   "theoretical_gap_(k-1)/2": 1.0,
+   "max_confidence_change": 0.0
+  },
+  "masks": {
+   "stored_shapes": [
+    "(36, 17, 9)"
+   ],
+   "scaled_on_disk": false,
+   "n_part_channels": 360,
+   "max_centroid_gap_vs_x_times_k_px": 1.037000029732809,
+   "within_1px": false
+  },
+  "loader_output_shapes": {
+   "image": [
+    3,
+    384,
+    192
+   ],
+   "target_masks": [
+    6,
+    96,
+    48
+   ],
+   "prompt_masks": [
+    8,
+    384,
+    192
+   ]
+  },
+  "loader_all_same_shape": true
+ },
+ "passed": false
+}

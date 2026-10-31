@@ -146,11 +146,11 @@ def main():
     L += ["", "## 4. 키포인트·마스크 스케일 검증", ""]
     if scale:
         L.append(f"전체 통과 여부: **{scale['passed']}** (`results/stage0_scale_check.json`). 원본 {scale['n_samples']}장 기준입니다.")
-        L += ["", "| 배율 | 공식 대비 최대 오차 | x·k와의 최대 차이 | 이론값 (k−1)/2 | 마스크 무게중심 최대 차이(px) | 저장 마스크 형태 |", "|---:|---:|---:|---:|---:|---|"]
+        L += ["", "| 배율 | 공식 대비 최대 오차 | x·k와의 최대 차이 | 이론값 (k−1)/2 | 마스크 무게중심과 c·k 최대 차이(px) | 1px 이내 | 픽셀 중심 공식과 차이(px) | 저장 마스크 형태 |", "|---:|---:|---:|---:|---:|---|---:|---|"]
         for k in SCALES:
             c = scale[f"x{k}"]
             L.append(f"| ×{k} | {c['keypoints']['max_err_vs_pixel_center_formula']:.2e} | {c['keypoints']['max_gap_vs_x_times_k']:.3f} | {c['keypoints']['theoretical_gap_(k-1)/2']} | "
-                     f"{c['masks']['max_centroid_gap_vs_x_times_k_px']:.3f} | {', '.join(c['masks']['stored_shapes'])} |")
+                     f"{c['masks']['max_centroid_gap_vs_x_times_k_px']:.3f} | {c['masks']['within_1px']} | {c['masks']['max_centroid_gap_vs_pixel_center_formula_px']:.3f} | {', '.join(c['masks']['stored_shapes'])} |")
         L += ["", "키포인트는 픽셀 중심 규약이라 요청하신 `(x+0.5)·k−0.5`를 썼고, `x·k` 비교는 그 차이가 이론값과 같다는 확인입니다. 마스크는 17×9 고정 해상도라 스케일하지 않았습니다. 근거는 README입니다.", ""]
     else:
         L += ["검증 결과가 없습니다.", ""]

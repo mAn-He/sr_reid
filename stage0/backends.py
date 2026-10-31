@@ -373,9 +373,11 @@ class KprBackend:
         from torchreid.utils.tools import extract_test_embeddings
         self.engine.set_model_mode("eval")
         imgs, target_masks, prompt_masks, keypoints_xyc, pids, camids = self.engine.parse_data_for_eval(data)
-        target_masks = target_masks.cuda() if target_masks is not None else None
-        prompt_masks = prompt_masks.cuda() if prompt_masks is not None else None
-        out = self.model(imgs.cuda(), target_masks=target_masks, prompt_masks=prompt_masks, keypoints_xyc=keypoints_xyc,
+        if self.engine.use_gpu:
+            imgs = imgs.cuda()
+            target_masks = target_masks.cuda() if target_masks is not None else None
+            prompt_masks = prompt_masks.cuda() if prompt_masks is not None else None
+        out = self.model(imgs, target_masks=target_masks, prompt_masks=prompt_masks, keypoints_xyc=keypoints_xyc,
                          cam_label=camids)
         features, vis, _, _ = extract_test_embeddings(out, self.cfg.model.kpr.test_embeddings)
         self.last_shape = {"parts": features.shape[1], "dim": features.shape[2], "vis_dtype": str(vis.dtype),
