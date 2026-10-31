@@ -23,7 +23,7 @@ tmux new -d -s srreid -c /workspace/sr-reid "bash scripts/run_pipeline.sh 2>&1 |
 5. 외부 SR 저장소는 수정하지 않습니다.
 6. 보행자 이미지를 외부 서비스로 보내지 않습니다. 추론은 `HF_HUB_OFFLINE=1`로 실행합니다.
 
-**test 가드 주의:** 파드가 root로 돌아 `chmod 000`은 실제로 접근을 막지 못합니다. 실제 차단은 `common/guard.py`의 경로 검사와 audit hook이 담당하며, `ALLOW_TEST=1`일 때만 허용합니다.
+**test 가드 주의:** 현재 `/workspace`(MooseFS)에서는 root도 `data/locked`의 `chmod 000`에 막혔습니다(`ls` Permission denied). 다만 root가 권한을 되돌리거나 다른 파일시스템으로 옮기면 이 보호는 사라지므로, 주된 차단은 `common/guard.py`의 경로 검사와 audit hook입니다. `ALLOW_TEST=1`일 때만 허용합니다.
 
 ## 데이터 출처
 
