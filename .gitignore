@@ -1,0 +1,12 @@
+data/market/
+data/locked/
+data/incoming/
+data/processed/
+data/*.sha256
+weights/
+runs/
+results/*.png
+logs/
+third_party/
+__pycache__/
+*.pyc

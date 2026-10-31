@@ -1,0 +1,21 @@
+# srreid-core: 데이터, ReID, 평가, bicubic, lanczos. Pillow는 전 env 9.5.0으로 통일한다.
+name: srreid-core
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.13
+  - pip
+  - setuptools<81
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu118
+      - torch==2.1.2+cu118
+      - torchvision==0.16.2+cu118
+      - numpy==1.26.4
+      - Pillow==9.5.0
+      - pyiqa==0.1.10
+      - pandas==2.1.4
+      - scipy==1.11.4
+      - matplotlib==3.8.2
+      - PyYAML==6.0.1
+      - pytest==7.4.4
+      - gdown==5.2.0

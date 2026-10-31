@@ -1,0 +1,68 @@
+run_id: smoke_001
+change_reason: null
+seed: 0
+paths:
+  fetch_market: false
+  market_root: runs/smoke_data/market
+  processed: runs/smoke_data/processed
+  runs: runs
+  results: runs/smoke_data/results
+  report: runs/smoke_data/REPORT.md
+split:
+  train_dir: bounding_box_train
+  expected_train_images: 216
+  expected_train_ids: 24
+  n_val_ids: 6
+  split_seed: 0
+lr:
+  scale: 4
+  hr_size: [128, 64]     # H, W
+  lr_size: [32, 16]      # H, W
+  filter: PIL.BICUBIC
+  reducing_gap: null
+reid:
+  arch: resnet50
+  pretrained: weights/resnet50-0676ba61.pth   # torchvision IMAGENET1K_V1
+  last_stride: 1
+  input_size: [256, 128]
+  resize_filter: PIL.BICUBIC
+  loss: {ce_label_smoothing: 0.1, triplet_margin: 0.3, center: false}
+  sampler: {p: 4, k: 4}
+  optim: {name: adam, lr: 3.5e-4, weight_decay: 5.0e-4, warmup_epochs: 10, warmup_factor: 0.1, milestones: [40, 70], gamma: 0.1}
+  epochs: 2
+  augment: {flip: 0.5, pad_crop: 10, random_erasing: 0.5}
+  eval: {feature: after_bnneck, flip_tta: false, l2_norm: true, batch: 128}
+  num_workers: 2
+  ckpt_every: 1
+  path1: {primary: mixed, secondary: lr_only, p_lr: 0.5}   # 결과 확인 전 등록. 근거는 README
+gpu:
+  min_free_gb_train: 6
+  min_free_gb_sr: 8
+  min_free_gb_eval: 3
+  fraction_train: 0.25   # 배치 64 실측 예약 5.0GB. 학습 3개 + SR 1개가 24GB 안에 들어가도록 나눈다
+  fraction_sr: 0.30
+  fraction_exclusive: 0.90
+  exclusive_max_used_gb: 1.0     # 단독 측정 시작 조건
+  exclusive_max_foreign_gb: 2.0  # 측정 중 다른 프로세스 추정 사용량 상한. 넘으면 exclusive_gpu=false
+  wait_timeout_s: 21600
+sr:
+  preup_policies: [official, native, fixed8x]
+  output_size: [128, 64]
+  exclusive_n: 2
+  oom_retries: 3
+  determinism_n: 1
+  methods:
+    bicubic: {env: srreid-core, kind: classic, filter: BICUBIC}
+    lanczos: {env: srreid-core, kind: classic, filter: LANCZOS}
+    realesrgan_x4plus: {env: srreid-realesrgan, kind: realesrgan, repo: third_party/Real-ESRGAN, script: inference_realesrgan.py, weights: [weights/RealESRGAN_x4plus.pth]}
+    pisa_sr: {env: srreid-pisasr, kind: pisa, repo: third_party/PiSA-SR, script: test_pisasr.py, lambda_pix: 1.0, lambda_sem: [0.0, 1.0, 2.0], weights: [weights/pisa_sr/pisa_sr.pkl, weights/sd21_base]}
+    osdhuman: {env: srreid-osdhuman, kind: osd, repo: third_party/OSDHuman, script: run_inference.py, upscale: 4, weights: [weights/osdhuman/model.pkl, weights/osdhuman/model_embedding_change.pkl, weights/sd21_base, weights/ram_swin_large_14m.pth]}
+eval:
+  bootstrap: {unit: query_identity, B: 200, seed: 0, ci: 0.95}
+  fidelity: {psnr_ssim: y_channel, lpips: alex, backend: pyiqa, batch: 64}
+  correlate: {sem_representative: 1.0}
+go_nogo:
+  broken_rate_max: 0.01
+  broken_min_y_std: 2.0
+  broken_min_psnr_db: 10.0
+  official_query_count: 3368   # 문헌상 Market-1501 공식 query 수. 파일은 읽지 않는다.

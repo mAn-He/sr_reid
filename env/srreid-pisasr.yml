@@ -1,0 +1,24 @@
+# srreid-pisasr: PiSA-SR 9c76e12e requirements.txt 고정 버전. torchvision은 torch 2.0.1의 짝으로 고정한다.
+name: srreid-pisasr
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - setuptools<81
+  - pip:
+      - torch==2.0.1
+      - torchvision==0.15.2
+      - diffusers==0.25.0
+      - transformers==4.28.1
+      - xformers==0.0.20
+      - einops==0.7.0
+      - open-clip-torch==2.20.0
+      - peft==0.9.0
+      - Pillow==9.5.0
+      - PyYAML==6.0
+      - huggingface_hub==0.25.2
+      - numpy==1.23.5
+      - opencv-python==4.8.0.74
+      - loralib
+      - fairscale
