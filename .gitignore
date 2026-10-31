@@ -10,3 +10,6 @@ logs/
 third_party/
 __pycache__/
 *.pyc
+data/bicubic_x*/
+data/kpr/
+data/kpr_annotations/

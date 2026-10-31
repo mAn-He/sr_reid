@@ -105,3 +105,37 @@ conda env 4개를 `/workspace/miniforge3`에 새로 만듭니다(`env/setup_envs
 | `srreid-realesrgan` | Real-ESRGAN |
 | `srreid-pisasr` | PiSA-SR |
 | `srreid-osdhuman` | OSDHuman |
+
+## Stage 0: RTX 4090 실행 가능 범위 실측
+
+```bash
+tmux new -d -s stage0 -c /workspace/sr-reid "bash scripts/run_stage0.sh 2>&1 | tee -a logs/stage0.log"
+```
+
+파일럿 tmux가 끝나고 GPU가 빈 뒤에만 측정을 시작합니다. 측정마다 별도 프로세스이고, 끝난 측정은 다시 돌리지 않습니다. 결과는 `results/stage0_probe.csv`, `results/stage0_eval_mem.csv`, `STAGE0_REPORT.md`입니다.
+
+### 데이터와 test 분리
+
+- `data/bicubic_x{2,3}`: `bounding_box_train`을 PIL BICUBIC으로 확대한 PNG. sha256은 `data/bicubic_x{k}_manifest.csv`.
+- KPR 공식 주석 zip에는 `query`, `bounding_box_test` 주석도 들어 있어(이미지는 없음) `scripts/stage0_extract_kpr.py`가 `bounding_box_train` 항목만 풀고 zip을 `chmod 000`으로 잠급니다.
+- CLIP-ReID, KPR의 공식 데이터 클래스는 생성 시 query와 gallery를 읽으므로 쓰지 않습니다. `stage0/backends.py`가 train만 읽는 데이터 목록을 넘기고, 저장소 코드는 수정하지 않습니다.
+
+### 키포인트 좌표 규약: 픽셀 중심
+
+- JSON은 소수 둘째 자리 좌표이고 값이 이미지 밖으로 나가기도 합니다(train 12,936개 측정: x −27.57~93.56, y −44.49~188.84). 정수 픽셀 값이 아닙니다.
+- 주석 생성에 쓰인 OpenPifPaf의 `transforms/scale.py`는 `x_scale = (w' − 1) / (w − 1)`로 좌표를 옮깁니다. 0과 w−1이 첫 픽셀과 끝 픽셀의 중심일 때 성립하는 식이라 정수 좌표가 픽셀 중심인 규약입니다.
+- 따라서 ×k 좌표는 `(x + 0.5)·k − 0.5`입니다. PIL BICUBIC 확대의 기하와도 일치합니다. `x·k`와의 차이는 (k−1)/2 px입니다.
+- 이미지 밖 좌표는 그대로 변환하고, 로더의 `kp_img_to_kp_bbox`가 실제 이미지 크기로 걸러냅니다. 빈 JSON 163개는 빈 채로 둡니다.
+
+### 마스크 해상도: 스케일하지 않음
+
+- `masks/*.npy`는 36×17×9 float32입니다(표본 300개 모두 같음). 이미지 해상도 128×64가 아닙니다.
+- 17×9는 PifPaf의 stride 8 필드 크기와 맞습니다((129−1)/8+1, (65−1)/8+1). 입력 크기별 KPR 특징맵 해상도와도 무관한 고정 크기입니다.
+- 규칙대로 디스크의 마스크는 스케일하지 않습니다. 로더의 `Resize`와 `ResizeMasks`가 실제 입력과 특징맵 크기로 보간합니다.
+
+### 로더의 원본 크기 가정
+
+- `data/masks_transforms/resize.py`의 `Resize`는 입력 크기에서 배율을 계산하고, `read_keypoints`는 실제 이미지 크기를 bbox로 씁니다. 128×64를 가정하지 않습니다.
+- 다만 이 `Resize`는 키포인트를 `x·s`로 옮깁니다. ×k 데이터에서는 입력과 목표 크기가 같아 배율 1이므로 영향이 없습니다.
+- `keypoints_to_masks.py:342`의 `W, H = (32, 64)`는 `joints_gaussian` 모드 전용입니다. 공식 설정은 `keypoints_gaussian`이라 이 경로를 타지 않습니다.
+- KPR 공식 입력은 384×128이지만 측정은 지시대로 256×128, 384×192입니다.
