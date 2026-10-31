@@ -78,3 +78,10 @@ def test_bootstrap_verdict_and_mean():
     assert verdict(-0.1, 0.1) == "inconclusive"
     m = resample_means(np.array([2.0, 0.0]), np.array([2.0, 2.0]), np.array([[2.0, 0.0], [1.0, 1.0]]))
     assert m == pytest.approx([1.0, 0.5])
+
+
+def test_conditions_keep_single_lambda_sem():
+    from sr.run import conditions
+    cfg = {"sr": {"preup_policies": ["official"], "methods": {
+        "bicubic": {"kind": "classic"}, "pisa_sr": {"kind": "pisa", "lambda_sem": [0.0, 2.0]}}}}
+    assert [c["lambda_sem"] for c in conditions(cfg)] == [None, 0.0, 2.0]

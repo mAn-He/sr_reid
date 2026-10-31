@@ -31,8 +31,8 @@ def conditions(cfg):
         for sem in m.get("lambda_sem", [None]):
             for policy in cfg["sr"]["preup_policies"]:
                 base = method if sem is None else f"{method}_sem{sem}"
-                out.append({"cid": f"{base}__{policy}", "base": base, "method": method, "policy": policy,
-                            "lambda_sem": sem, **m})
+                out.append({**m, "cid": f"{base}__{policy}", "base": base, "method": method, "policy": policy,
+                            "lambda_sem": sem})
     return out
 
 
