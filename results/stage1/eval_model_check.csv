@@ -1,0 +1,8 @@
+model,ok,params,embed_dim,input_hw,peak_alloc_mib_bs5,peak_reserved_mib_bs5,peak_alloc_mib_bs64,peak_reserved_mib_bs64,img_per_s_bs64,precision,server,weight
+dinov3_small,True,21586944,384,"[256, 128]",106.3,136.0,268.8,388.0,3796.0,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/dinov3/vit_small_patch16_dinov3.lvd1689m/model.safetensors
+dinov3_base,True,85641216,768,"[256, 128]",363.2,402.0,663.7,924.0,1257.9,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/dinov3/vit_base_patch16_dinov3.lvd1689m/model.safetensors
+dinov3_large,True,303079424,1024,"[256, 128]",1200.4,1236.0,1597.6,1882.0,381.7,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/dinov3/vit_large_patch16_dinov3.lvd1689m/model.safetensors
+personvit_small,True,22024552,384,"[256, 128]",106.9,134.0,253.9,394.0,3937.9,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/personvit/vits.lup.256x128.wopt.csk.4-8.ar.375.n8/checkpoint0220.pth
+personvit_base,True,86515432,768,"[256, 128]",364.0,402.0,633.3,906.0,1340.6,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/personvit/vitb.lup.256x128.wopt.csk.4-8.ar.375.n8/checkpoint0260.pth
+plip_rn50,True,37757536,768,"[256, 128]",310.6,448.0,630.0,752.0,3325.3,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/plip/PLIP_RN50.pth.tar
+afine,True,152678285,,"[512, 256]",749.5,766.0,2362.9,2638.0,534.4,fp32,새 서버 RTX 4090,/workspace/sr-reid/weights/stage1/afine/pyiqa_mirror/afine.pth

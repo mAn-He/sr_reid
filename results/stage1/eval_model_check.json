@@ -1,0 +1,477 @@
+{
+ "info": {
+  "server": "새 서버 RTX 4090",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "python": "3.10.13",
+  "torch": "2.1.2+cu118",
+  "cuda": "11.8",
+  "timm": "1.0.30",
+  "torchvision": "0.16.2+cu118",
+  "env": "/workspace/miniforge3/envs/srreid-quality",
+  "date": "2026-11-06 15:54:54",
+  "samples": [
+   {
+    "name": "0002_c3s1_136258_02.jpg",
+    "sr_src": "pil_bicubic_x4_mem",
+    "orig_size": [
+     64,
+     128
+    ],
+    "sr_size": [
+     256,
+     512
+    ]
+   },
+   {
+    "name": "0002_c5s1_000476_02.jpg",
+    "sr_src": "pil_bicubic_x4_mem",
+    "orig_size": [
+     64,
+     128
+    ],
+    "sr_size": [
+     256,
+     512
+    ]
+   },
+   {
+    "name": "0002_c6s1_073426_02.jpg",
+    "sr_src": "pil_bicubic_x4_mem",
+    "orig_size": [
+     64,
+     128
+    ],
+    "sr_size": [
+     256,
+     512
+    ]
+   },
+   {
+    "name": "0007_c1s6_028546_01.jpg",
+    "sr_src": "pil_bicubic_x4_mem",
+    "orig_size": [
+     64,
+     128
+    ],
+    "sr_size": [
+     256,
+     512
+    ]
+   },
+   {
+    "name": "0007_c2s3_071002_01.jpg",
+    "sr_src": "pil_bicubic_x4_mem",
+    "orig_size": [
+     64,
+     128
+    ],
+    "sr_size": [
+     256,
+     512
+    ]
+   }
+  ]
+ },
+ "results": [
+  {
+   "model": "dinov3_small",
+   "timm_name": "vit_small_patch16_dinov3.lvd1689m",
+   "weight": "/workspace/sr-reid/weights/stage1/dinov3/vit_small_patch16_dinov3.lvd1689m/model.safetensors",
+   "params": 21586944,
+   "embed_dim": 384,
+   "num_prefix_tokens": 5,
+   "input_hw": [
+    256,
+    128
+   ],
+   "preprocess": "PIL BICUBIC -> (256, 128), mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)",
+   "pooling": "CLS after final norm",
+   "cos_orig_sr": [
+    0.998349,
+    0.994808,
+    0.996992,
+    0.999129,
+    0.99877
+   ],
+   "weights_alloc_mib": 94.5,
+   "peak_alloc_mib_bs5": 106.3,
+   "peak_reserved_mib_bs5": 136.0,
+   "peak_alloc_mib_bs64": 268.8,
+   "peak_reserved_mib_bs64": 388.0,
+   "img_per_s_bs64": 3796.0,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  },
+  {
+   "model": "dinov3_base",
+   "timm_name": "vit_base_patch16_dinov3.lvd1689m",
+   "weight": "/workspace/sr-reid/weights/stage1/dinov3/vit_base_patch16_dinov3.lvd1689m/model.safetensors",
+   "params": 85641216,
+   "embed_dim": 768,
+   "num_prefix_tokens": 5,
+   "input_hw": [
+    256,
+    128
+   ],
+   "preprocess": "PIL BICUBIC -> (256, 128), mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)",
+   "pooling": "CLS after final norm",
+   "cos_orig_sr": [
+    0.998355,
+    0.99799,
+    0.997022,
+    0.997887,
+    0.998451
+   ],
+   "weights_alloc_mib": 339.5,
+   "peak_alloc_mib_bs5": 363.2,
+   "peak_reserved_mib_bs5": 402.0,
+   "peak_alloc_mib_bs64": 663.7,
+   "peak_reserved_mib_bs64": 924.0,
+   "img_per_s_bs64": 1257.9,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  },
+  {
+   "model": "dinov3_large",
+   "timm_name": "vit_large_patch16_dinov3.lvd1689m",
+   "weight": "/workspace/sr-reid/weights/stage1/dinov3/vit_large_patch16_dinov3.lvd1689m/model.safetensors",
+   "params": 303079424,
+   "embed_dim": 1024,
+   "num_prefix_tokens": 5,
+   "input_hw": [
+    256,
+    128
+   ],
+   "preprocess": "PIL BICUBIC -> (256, 128), mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)",
+   "pooling": "CLS after final norm",
+   "cos_orig_sr": [
+    0.998514,
+    0.998732,
+    0.999124,
+    0.99938,
+    0.99874
+   ],
+   "weights_alloc_mib": 1169.2,
+   "peak_alloc_mib_bs5": 1200.4,
+   "peak_reserved_mib_bs5": 1236.0,
+   "peak_alloc_mib_bs64": 1597.6,
+   "peak_reserved_mib_bs64": 1882.0,
+   "img_per_s_bs64": 381.7,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  },
+  {
+   "model": "personvit_small",
+   "weight": "/workspace/sr-reid/weights/stage1/personvit/vits.lup.256x128.wopt.csk.4-8.ar.375.n8/checkpoint0220.pth",
+   "ckpt_epoch": 221,
+   "ckpt_top_keys": [
+    "student",
+    "teacher",
+    "optimizer",
+    "epoch",
+    "args",
+    "ibot_loss"
+   ],
+   "ckpt_args_subset": {
+    "arch": "vit_small",
+    "image_size": [
+     256,
+     128
+    ],
+    "epochs": 300,
+    "out_dim": 8192,
+    "use_masked_im_modeling": true,
+    "cfs_idx_file": null,
+    "pretrained_file": null,
+    "load_from": null
+   },
+   "teacher_non_backbone_modules": [
+    "head.last_layer",
+    "head.last_layer2",
+    "head.mlp"
+   ],
+   "load_missing": [
+    "fc.weight",
+    "fc.bias"
+   ],
+   "load_unexpected": [],
+   "loaded_tensors": 150,
+   "params_excl_unused_fc": 21639552,
+   "params": 22024552,
+   "embed_dim": 384,
+   "input_hw": [
+    256,
+    128
+   ],
+   "preprocess": "PIL BICUBIC -> (256, 128), mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]",
+   "pooling": "CLS after final norm",
+   "cos_orig_sr": [
+    0.999939,
+    0.999958,
+    0.999927,
+    0.999942,
+    0.999951
+   ],
+   "weights_alloc_mib": 96.5,
+   "peak_alloc_mib_bs5": 106.9,
+   "peak_reserved_mib_bs5": 134.0,
+   "peak_alloc_mib_bs64": 253.9,
+   "peak_reserved_mib_bs64": 394.0,
+   "img_per_s_bs64": 3937.9,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  },
+  {
+   "model": "personvit_base",
+   "weight": "/workspace/sr-reid/weights/stage1/personvit/vitb.lup.256x128.wopt.csk.4-8.ar.375.n8/checkpoint0260.pth",
+   "ckpt_epoch": 261,
+   "ckpt_top_keys": [
+    "student",
+    "teacher",
+    "optimizer",
+    "epoch",
+    "args",
+    "ibot_loss"
+   ],
+   "ckpt_args_subset": {
+    "arch": "vit_base",
+    "image_size": [
+     256,
+     128
+    ],
+    "epochs": 300,
+    "out_dim": 8192,
+    "use_masked_im_modeling": true,
+    "cfs_idx_file": null,
+    "pretrained_file": null,
+    "load_from": null
+   },
+   "teacher_non_backbone_modules": [
+    "head.last_layer",
+    "head.last_layer2",
+    "head.mlp"
+   ],
+   "load_missing": [
+    "fc.weight",
+    "fc.bias"
+   ],
+   "load_unexpected": [],
+   "loaded_tensors": 150,
+   "params_excl_unused_fc": 85746432,
+   "params": 86515432,
+   "embed_dim": 768,
+   "input_hw": [
+    256,
+    128
+   ],
+   "preprocess": "PIL BICUBIC -> (256, 128), mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]",
+   "pooling": "CLS after final norm",
+   "cos_orig_sr": [
+    0.999462,
+    0.999868,
+    0.9998,
+    0.99987,
+    0.999831
+   ],
+   "weights_alloc_mib": 342.9,
+   "peak_alloc_mib_bs5": 364.0,
+   "peak_reserved_mib_bs5": 402.0,
+   "peak_alloc_mib_bs64": 633.3,
+   "peak_reserved_mib_bs64": 906.0,
+   "img_per_s_bs64": 1340.6,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  },
+  {
+   "model": "plip_rn50",
+   "weight": "/workspace/sr-reid/weights/stage1/plip/PLIP_RN50.pth.tar",
+   "ckpt_epoch": 60,
+   "ckpt_top_keys": [
+    "epoch",
+    "ImgEncoder_state_dict",
+    "TxtEncoder_state_dict",
+    "Decoder_state_dict"
+   ],
+   "load_strict": "<All keys matched successfully>",
+   "params": 37757536,
+   "embed_dim": 768,
+   "input_hw": [
+    256,
+    128
+   ],
+   "preprocess": "PIL BICUBIC -> (256, 128), mean=[0.357, 0.323, 0.328], std=[0.252, 0.242, 0.239] (zs_infer.py)",
+   "pooling": "AttentionPool2d 출력(global_image_out)",
+   "cos_orig_sr": [
+    0.999961,
+    0.999873,
+    0.999948,
+    0.999796,
+    0.999951
+   ],
+   "weights_alloc_mib": 157.6,
+   "peak_alloc_mib_bs5": 310.6,
+   "peak_reserved_mib_bs5": 448.0,
+   "peak_alloc_mib_bs64": 630.0,
+   "peak_reserved_mib_bs64": 752.0,
+   "img_per_s_bs64": 3325.3,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  },
+  {
+   "model": "afine",
+   "weight": "/workspace/sr-reid/weights/stage1/afine/pyiqa_mirror/afine.pth",
+   "clip_weight": "/workspace/sr-reid/weights/stage1/afine/ViT-B-32.pt",
+   "afine_ckpt_keys": [
+    "finetuned_clip",
+    "natural",
+    "fidelity",
+    "fidelity_scale",
+    "natural_scale",
+    "adapter"
+   ],
+   "params": 152678285,
+   "params_clip": 151277313,
+   "input_hw": [
+    512,
+    256
+   ],
+   "preprocess": "dis=SR 원 크기, ref=원본 PIL BICUBIC -> (512, 256); /255, CLIP mean=(0.48145466, 0.4578275, 0.40821073), std=(0.26862954, 0.26130258, 0.27577711); 32배수 아니면 bicubic 보간",
+   "scores_dis_lanczos_ref_bicubic": {
+    "afine_all_scale": [
+     46.956802,
+     50.1077,
+     50.479485,
+     46.775253,
+     45.408306
+    ],
+    "afine_all": [
+     -2.260267,
+     -1.960775,
+     -1.925478,
+     -2.27757,
+     -2.408149
+    ],
+    "fidelity": [
+     -1.963292,
+     -1.971447,
+     -1.97035,
+     -1.961783,
+     -1.959282
+    ],
+    "natural_dis": [
+     -0.234485,
+     0.01011,
+     0.041112,
+     -0.233001,
+     -0.320799
+    ],
+    "natural_ref": [
+     -0.213873,
+     0.014825,
+     0.048747,
+     -0.206476,
+     -0.291492
+    ]
+   },
+   "max_abs_dis_minus_ref": 0.0,
+   "output_fields": [
+    "afine_all_scale",
+    "afine_all",
+    "fidelity",
+    "natural_dis",
+    "natural_ref"
+   ],
+   "batch_vs_official_bs1_maxabs": 1.1920928955078125e-07,
+   "scores": {
+    "afine_all_scale": [
+     47.707619,
+     50.114971,
+     50.472271,
+     47.785366,
+     46.892422
+    ],
+    "afine_all": [
+     -2.188783,
+     -1.960085,
+     -1.926163,
+     -2.181386,
+     -2.266402
+    ],
+    "fidelity": [
+     -1.97491,
+     -1.97491,
+     -1.97491,
+     -1.97491,
+     -1.97491
+    ],
+    "natural_dis": [
+     -0.213873,
+     0.014825,
+     0.048747,
+     -0.206476,
+     -0.291492
+    ],
+    "natural_ref": [
+     -0.213873,
+     0.014825,
+     0.048747,
+     -0.206476,
+     -0.291492
+    ]
+   },
+   "scores_dis_eq_ref": {
+    "afine_all_scale": [
+     47.707619,
+     50.114971,
+     50.472271,
+     47.785366,
+     46.892422
+    ],
+    "afine_all": [
+     -2.188783,
+     -1.960085,
+     -1.926163,
+     -2.181386,
+     -2.266402
+    ],
+    "fidelity": [
+     -1.97491,
+     -1.97491,
+     -1.97491,
+     -1.97491,
+     -1.97491
+    ],
+    "natural_dis": [
+     -0.213873,
+     0.014825,
+     0.048747,
+     -0.206476,
+     -0.291492
+    ],
+    "natural_ref": [
+     -0.213873,
+     0.014825,
+     0.048747,
+     -0.206476,
+     -0.291492
+    ]
+   },
+   "note": "모든 항목 낮을수록 좋음(공식 README). afine_all_scale in (0,100).",
+   "weights_alloc_mib": 626.1,
+   "peak_alloc_mib_bs5": 749.5,
+   "peak_reserved_mib_bs5": 766.0,
+   "peak_alloc_mib_bs64": 2362.9,
+   "peak_reserved_mib_bs64": 2638.0,
+   "img_per_s_bs64": 534.4,
+   "precision": "fp32",
+   "server": "새 서버 RTX 4090",
+   "ok": true
+  }
+ ]
+}

@@ -4,32 +4,18 @@
 
 ## 1. 전체 구조
 1. **Stage 1, SR 기법 비교 (학습 없음)**
-   - train 표본(751명 × 3장, 2,250장)에 12종 × {×2, ×3, ×4} SR을 적용한다.
-   - SR 전후 비교 지표로 상위 2개를 고른다. 규칙은 `STAGE1_SELECTION_RULE.md`이고 결과 계산 전에 고정한다. test는 쓰지 않는다.
+   - train 표본(751명 × 3장, 2,250장)에 12종 × {×3, ×4} SR을 적용한다.
+   - 정답 없이 원본 대비 지표와 시각화만 만든다. 선정(2개)은 사용자가 직접 한다. test는 쓰지 않는다.
 2. **생성**: 선정 2개 방법의 train·test 전체 ×3·×4(`STAGE05_PART_F_PLAN.md`). bicubic은 기존 데이터를 재사용한다. test는 사용자가 잠금을 풀고 다시 잠그는 절차로 만든다.
 3. **Stage 2**: 모델 4종 × {bicubic, SR1, SR2} × {×3, ×4} = 학습 24회, seed 42.
    - 평가는 2×2로 (bicubic 학습 모델, SR 학습 모델) × (bicubic test, SR test)다.
    - 모델·배율마다 평가 7회: C 모델로 bicubic·SR1·SR2 test, SR1 모델로 SR1·bicubic test, SR2 모델로 SR2·bicubic test.
 
-## 2. Stage 1 세부
-- 표본: `configs/stage1_sample.csv`(`stage1/make_sample.py`, seed 42).
-  - 2,250장, 751명. 신원당 3장이 748명, 2장이 3명이다.
-  - 서로 다른 카메라 3대가 701명, 2대가 50명이다(그 50명은 train에서 카메라가 2대뿐).
-  - 카메라 분포 c1~c6: 460 / 377 / 491 / 164 / 390 / 368.
-- 지표(정의와 용도는 규칙 문서 2절)
-  - a. 정보 보존: LR 일관성, 색. LR 일관성은 1단계 거르기에 쓴다.
-  - b. 주파수: 보고만 한다.
-  - c. 사람 특징 보존: 공개 BoT·CLIP-ReID ID 코사인, 속성 일치율.
-  - d. 복원력: 1/k 축소 → SR → PSNR, SSIM, LPIPS, DreamSim.
-  - e. 무참조 화질: MUSIQ, CLIP-IQA, MANIQA, NIQE. 보고만 한다.
-- SR 실행량: 12종 × 3배율 × (표본 2,250장 + 복원용 축소 입력 2,250장).
-  - ×4 전용 방법(osdhuman, pisa_sr ×5)은 ×4 한 번 실행의 출력을 줄여 ×2·×3을 만든다. 실제로는 원본 입력 1회 + 축소 입력 배율별 3회다.
-  - 예상 GPU 시간 [새, 4090]. SR은 배치 측정(`results/stage1_sr_batch_bench.csv`)과 스모크 중앙값에서 계산했다. 축소 입력도 원본과 같은 시간이 든다고 보고 계산한 상한이다.
-    - SR, 전부 배치 1: ×4 약 5.0h, ×3 약 2.7h, ×2 약 2.2h, 합계 약 10h. PiSA λ 5단계가 7.5h를 차지한다.
-    - SR, 배치 사용(realesrgan b4, swinir b32, hat b8~16, 확산 b8~16, mambairv2는 b1): ×4 약 3.3h, ×3 약 1.8h, ×2 약 1.5h, 합계 약 6.6h.
-    - 지표: d(복원)는 이미지당 0.106초 기준 약 2.4h다. e(무참조)는 측정하지 않았고 0.1~0.2초로 가정해 약 2.3~4.5h다. a·b·c는 수십 분이다. 합계 약 5~7h다.
-    - Stage 1 합계는 약 12~17h다(×2 공식 가중치를 쓰면 swinir·hat·mambairv2 ×2분 약 0.3h가 늘어난다).
-- 산출물: `results/stage1_metrics.csv`, `results/stage1_ranking.csv`, `STAGE1_REPORT.md`. 사용자 승인 뒤 생성 단계로 넘어간다.
+## 2. Stage 1 세부 (2026-11-06 2차 교체)
+- 이전 Stage 1 세부(선정 규칙, ReID 모델 기반 지표, 속성 모델, ×2 등)는 취소했다. `STAGE1_SELECTION_RULE.md`는 "취소됨"으로 남긴다.
+- Stage 1은 순위·선정 없이 지표와 시각화만 만든다. 선정은 사용자가 한다. 정의와 단계는 `CLAUDE.md` 1절에 있고, 결과 보고서는 `STAGE1_REPORT.md`·`STAGE1_REPORT.html`이다.
+- 표본: `configs/stage1_sample.csv`(`stage1/make_sample.py`, seed 42). 2,250장, 751명(3장 748명, 2장 3명). 카메라 3대 701명, 2대 50명. 카메라 분포 c1~c6 460 / 377 / 491 / 164 / 390 / 368.
+- 0단계 결과(모델 로드, 재현성, ×3 방식 비교, 예상 시간·용량)는 `results/stage1/step0_*.csv`에 있다.
 
 ## 3. Stage 2 시간 추정 (학습 1회, 레시피 epoch)
 | 모델 | ×3 | ×4 | 근거 |
@@ -54,5 +40,4 @@
 memmap 4종, BoT worker_norm, KPR copy_read·float32 마스크, BIPO는 학습에서만, 핀 메모리 켬, 스레드 제한(OMP/MKL 4), WebP method 2, 다른 프로젝트 삭제 금지.
 
 ## 6. 남은 질문
-- Stage 1 선정 규칙 질문 4개: `STAGE1_SELECTION_RULE.md` 7절.
 - KPR 학습 서버(L40S 대 A100/H100)와 시점.

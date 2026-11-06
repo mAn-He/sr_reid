@@ -4,13 +4,13 @@
 
 ## 0. 변경 이력
 - v1(같은 날 오전): F1 train ×4 12종 → F2 상위 2개 + bicubic. **취소.** F1은 시작한 적이 없고 `data/`에 생성물은 0장이다.
-- v2(현재): Stage 1은 학습 없이 train 표본(2,250장)으로 SR을 비교한다(`STAGE1_SELECTION_RULE.md`). 전체 생성은 선정된 2개 방법 + bicubic만 한다.
+- v2(현재): Stage 1은 학습 없이 train 표본(2,250장)으로 SR을 비교하고 선정은 사용자가 한다(`CLAUDE.md` 1절; `STAGE1_SELECTION_RULE.md`는 취소됨). 전체 생성은 선정된 2개 방법 + bicubic만 한다.
 - 스모크 출력 `runs/stage05/sr_smoke/`(train 100장 × 12종 × ×4, 가중치 있으면 ×3)는 지우지 않는다.
 
 ## 1. 범위
 | 단계 | 대상 | 분할·배율 | 위치 | 시점 |
 |---|---|---|---|---|
-| S1 표본 | 12종 | train 표본 2,250장 × {×2, ×3, ×4}. 복원 실험(d)용 축소 입력 SR 포함 | `runs/stage1_sample/` | 선정 규칙 승인 뒤 |
+| S1 표본 | 12종 | train 표본 2,250장 × {×3, ×4} (2026-11-06 2차 교체: ×2·복원 실험 취소) | `runs/stage1_sample/` | 0단계 보고 승인 뒤 |
 | 전체 생성 | Stage 1 선정 2개 | train(12,936)·query(3,368)·gallery(19,732) × {×3, ×4} | train은 `data/<method>/x<k>/`, test는 잠긴 영역 | Stage 1 결과 승인 뒤 |
 | bicubic | — | 기존 `data/bicubic_x{3,4}` 재사용(스모크와 픽셀 100/100 일치 확인) | 기존 | — |
 

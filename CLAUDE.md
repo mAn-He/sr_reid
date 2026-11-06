@@ -15,7 +15,12 @@
 - 조건: C_k(train·test 모두 bicubic ×k), S_k(train·test 모두 SR ×k). 평가 전용: S_k 모델 + bicubic test, C_k 모델 + SR test.
 - 모델 4종: BoT, CLIP-ReID, KPR, KPR+SOLIDER. **seed 42 하나만 쓴다. seed를 추가하지 않는다.**
 - **전체 구조 (2026-11-06 설계 변경, 이전 Stage 1 설계인 검증 분할 651/100, BoT·CLIP-ReID 12종 학습, seed 추가, 두 모델 순위 비교, 병렬화는 전부 취소)**
-  - Stage 1: SR 기법 비교. ReID 학습 없이 train 표본(`configs/stage1_sample.csv`, 751명 × 3장, 2,250장)에서 SR 전후 비교 지표로 12종을 평가해 상위 2개를 고른다. 규칙은 `STAGE1_SELECTION_RULE.md`이고 결과 계산 전에 고정한다. test는 쓰지 않는다. 표본 SR 출력은 `runs/stage1_sample/`에 둔다.
+  - Stage 1 (2026-11-06 2차 교체): ReID 학습 없이 SR 12종을 비교한다. 정답(HR) 없이 모든 지표를 "실제 SR vs 원본 128×64"로만 계산한다. **순위·추천·선정은 하지 않는다. 결과와 시각화만 만들고 선정은 사용자가 한다.**
+    - 표본 `configs/stage1_sample.csv`(751명, 2,250장, seed 42), 배율 ×3·×4만(×2 없음), bicubic·lanczos도 같은 지표로 계산.
+    - 지표: DINOv3·PersonViT(불가 시 PLIP) 임베딩 코사인과 분포 거리(Fréchet, KID), A-FINE(원본 기준), FFT 4종(`stage1/fft_color.py`), ΔE2000(참고).
+    - 해석 기준선(약한 변형, 같은 사람 다른 카메라)은 그림에만 겹쳐 그린다. 집계: 이미지 → 신원 평균 → 751명 평균, 신원 단위 부트스트랩 95% CI(10,000회, seed 42).
+    - 취소된 것: 선정 규칙(`STAGE1_SELECTION_RULE.md`는 "취소됨" 표시로 보존), 가중 평균 순위, 파레토 선정, 탈락 단계, 스모크 파일럿, 보정 실험, ReID 모델 기반 지표, 속성 모델, 자기 찾기 비율, 사람 영역 패치·어텐션 비교, ×2.
+    - 단계: 0단계(모델 로드·재현성·×3 방식 확인, 보고 후 멈춤) → 1단계 SR 생성 → 2단계 지표 → 3단계 시각화. 산출물 `results/stage1/`, `results/stage1/figures/`, `STAGE1_REPORT.html`, `STAGE1_REPORT.md`.
   - 생성: 선정된 SR 2개 + bicubic만 train·test 전체를 ×3·×4로 만든다. bicubic은 기존 `data/bicubic_x{3,4}`를 재사용한다.
   - Stage 2: 모델 4종 × {bicubic, SR1, SR2} × {×3, ×4}, seed 42. 평가는 2×2로 (bicubic 학습 모델, SR 학습 모델) × (bicubic test, SR test)다.
 - 기준선은 공개 가중치를 공식 입력으로 평가한 참고 행이다(학습하지 않음). mAP/R1: BoT 85.95/94.63, CLIP-ReID 89.66/95.43, KPR 89.59/95.87, KPR+SOLIDER 93.25/96.59 (`results/baseline_public_weights.csv`).
@@ -25,7 +30,8 @@
 - **WebP**: 무손실 method 2 (`stage05/sr_generate.py`의 `WEBP`). 저장 직후 픽셀 전수 비교.
 - **SR 생성 범위 (2026-11-06 변경)**
   - 이전 F1(train ×4 전체 12종)은 취소했다. 시작한 적 없음, `data/`에 생성물 0장.
-  - Stage 1: 표본 2,250장 × 12종 × {×2, ×3, ×4}만 `runs/stage1_sample/`에 만든다.
+  - Stage 1: 표본 2,250장 × 12종 × {×3, ×4}만 `runs/stage1_sample/<method>/x<k>/<원본파일명>.webp`에 만든다(`stage1/sr_gen.py`). ×3: swinir·hat·mambairv2는 공식 ×3 가중치, realesrgan은 ×4 후 축소, osdhuman·pisa_sr은 0단계 비교 후 사용자가 정한다.
+  - Stage 1 배치 정책 (가): realesrgan b4(배치 1과 비트 일치), 나머지 b1. 이미지마다 파일명 기반 고정 seed(sha256("42:<파일명>")).
   - Stage 1 승인 뒤: 선정 2개 방법의 train·query·gallery ×3·×4. bicubic은 기존 데이터를 재사용한다.
   - 스모크 출력 `runs/stage05/sr_smoke/`(train 100장 × 12종)는 지우지 않는다.
   - 일괄 생성은 완성 WebP를 즉시 /workspace(`data/<method>/x<k>/<split>/`)에 쓰고, 재시작하면 남은 파일부터 이어서 생성한다(`sr_generate.py`가 완성 파일을 건너뜀).
@@ -45,7 +51,7 @@
   - 가중치·env·HF/torch 캐시는 /workspace에 둔다: `TORCH_HOME=/workspace/weights/torch`, `HF_HOME=/workspace/.cache/huggingface`, DreamSim은 `weights/stage05/dreamsim`(실제 디렉터리). /root를 가리키는 가중치 링크는 만들지 않는다.
 
 ## 3. 금지 사항
-- **SR 일괄 생성(선정 방법의 train·test 전체)은 사용자가 Stage 1 결과를 승인하기 전까지 시작하지 않는다.** Stage 1 표본 SR도 선정 규칙과 보고를 사용자가 승인한 뒤에 돌린다.
+- **SR 일괄 생성(선정 방법의 train·test 전체)은 사용자가 Stage 1 결과를 승인하기 전까지 시작하지 않는다.** Stage 1 표본 SR(1단계)도 0단계 보고를 사용자가 승인한 뒤에 돌린다.
 - test 이미지(query, bounding_box_test, gt_*)는 SR 생성만 허용하고 평가·열람하지 않는다. 예외는 공개 가중치 기준선·등가성 측정(이미 끝남)뿐이다. `data/locked`의 권한 변경·열람 금지. 가드는 `common/guard.py`(ALLOW_TEST=1일 때만 허용)다.
 - 학습 레시피 변경 금지(입력 크기 제외): 배치, PK 샘플링, 학습률, 스케줄, epoch, 옵티마이저, 정밀도, 증강.
 - 외부 모델·SR 저장소(`third_party/`) 소스 수정 금지. config, 래퍼, 서브클래스, 어댑터로만 바꾼다.
@@ -75,15 +81,11 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - 모델 파이프라인 근거: `docs/PIPELINE_<model>.md`, 입력 크기 `docs/INPUT_SIZE_POLICY.md`
 - 알려진 기록: `runs/stage05/done/d9_data_kpr_memmap.json`은 2026-11-01 01:47 쿼터 사건으로 0바이트였다. KPR memmap 등가성은 d10 copy_read 비교로 대신 확정했다.
 
-## 6. 현재 진행 단계 (갱신: 2026-11-06, 설계 변경 반영)
+## 6. 현재 진행 단계 (갱신: 2026-11-06, Stage 1 2차 교체 반영)
 - Stage 0, 파일럿, Stage 0.5 측정: 완료. 보고서는 `STAGE05_REPORT.md`, 3e 포함.
-- 설계 변경(위 1절): Stage 1은 학습 없는 SR 비교다. 이전 F1은 취소했다(시작한 적 없음).
-- Stage 1 준비
-  - 완료: 표본 `configs/stage1_sample.csv`(`stage1/make_sample.py`, seed 42, 2,250장, 751명).
-  - 완료: 선정 규칙 초안 `STAGE1_SELECTION_RULE.md` v0(사용자 승인 대기, 질문 4개).
-  - 완료: 방법별 SR 배치 추론 측정 `stage05/sr_batch_bench.py` → `results/stage1_sr_batch_bench.csv`(로그 `logs/stage1/sr_batch_bench/`).
-    - 배치 1과 비트 단위로 같은 것은 realesrgan b≤4뿐이다. swinir·hat는 ±1이고 mambairv2(gumbel RNG)는 배치하면 크게 바뀐다.
-    - osdhuman·pisa_sr은 공식 경로 자체가 실행마다 다르다(mem-efficient SDPA).
-    - mambairv2·osdhuman·pisa_sr 출력은 실행 안 처리 순서(RNG 소비)에 따라 달라지므로 재시작하면 결과가 달라진다.
-- **다음:** 사용자가 선정 규칙 v1, 속성 모델, ×2 가중치 정책, 배치 사용을 승인하면 표본 SR(`runs/stage1_sample/`)과 지표 계산을 시작한다.
-- 문서: `STAGE12_PLAN.md`(새 구조), `STAGE05_PART_F_PLAN.md`(새 범위).
+- SR 배치 추론 측정 완료: `results/stage1_sr_batch_bench.csv`. 배치 1과 비트 일치는 realesrgan b≤4뿐. mambairv2·osdhuman·pisa_sr은 실행 안 처리 순서(RNG)에 따라 출력이 달라진다.
+- **Stage 1 0단계 진행 중**
+  - SR 24조합 로드 확인(`stage1/run_step0.sh load`), 재현성(`repro`), osdhuman·pisa_sr ×3 방식 비교(`x3cmp`, 출력 `runs/stage1_step0/`).
+  - 평가 모델 확보: DINOv3(timm 사본 S/B/L), PersonViT(LUPerson 자기지도 S/B), PLIP(RN50), A-FINE(pyiqa 사본) → `weights/stage1/`(`SHA256.csv`), 적재기 `stage1/eval_models.py`, 점검 `results/stage1/eval_model_check.json`.
+  - 0단계 보고 후 사용자 승인 전에는 1단계 생성을 시작하지 않는다.
+- 문서: `STAGE12_PLAN.md`, `STAGE05_PART_F_PLAN.md`.
