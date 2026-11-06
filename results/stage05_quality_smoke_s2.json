@@ -1,0 +1,20 @@
+{
+ "server": "새 서버",
+ "n": 20,
+ "init_seconds": 24.6,
+ "sec_per_image_median": 0.1055,
+ "peak_alloc_gib": 1.25,
+ "mean": {
+  "lpips": 0.0066,
+  "dists": 0.0112,
+  "psnr_y": 47.901,
+  "ssim_y": 0.9941,
+  "dreamsim": 0.0103,
+  "lr_psnr_rgb": 42.3924,
+  "lr_psnr_y": 43.8196,
+  "de2000_top": 0.0093,
+  "de2000_bottom": 0.0065
+ },
+ "all_finite": true,
+ "note": "참조는 원본의 LANCZOS ×4 대용(진짜 HR 없음). 도구 동작·시간 확인용이며 품질 판단에 쓰지 않는다."
+}

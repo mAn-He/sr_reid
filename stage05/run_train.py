@@ -22,8 +22,37 @@ LOG = ROOT / "logs" / "stage05"
 RES = ROOT / "results"
 
 
+def write_done(path, obj):
+    """완료 표시를 원자적으로 쓴다(임시 파일 → rename). 2026-11-01 쿼터 사건 때 0바이트 완료 표시가 남은 적이 있다."""
+    path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=1))
+    os.replace(tmp, path)
+
+
+def quarantine_bad_done():
+    """읽을 수 없는 완료 표시(0바이트·깨진 JSON)를 logs/stage05/script_bug_rows/corrupt_done/로 옮겨 그 단계가 다시 돌게 한다. 지우지 않는다."""
+    bad = []
+    for f in sorted(DONE.glob("*.json")):
+        try:
+            json.loads(f.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            q = LOG / "script_bug_rows" / "corrupt_done"
+            q.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(f), str(q / f.name))
+            bad.append(f.name)
+    for f in DONE.glob("*.json.tmp"):
+        f.unlink()
+    if bad:
+        print(f"깨진 완료 표시 격리: {bad}", flush=True)
+
+
 def env(**kw):
-    e = dict(os.environ, PYTHONPATH=str(ROOT), PYTHONNOUSERSITE="1", WANDB_MODE="disabled", **kw)
+    # 스레드 제한(확정 결정, d13): 새 서버 cgroup 13.6코어에서 torch 기본 64스레드가 스로틀링된다. kw로 덮어쓸 수 있다.
+    e = dict(os.environ, PYTHONPATH=str(ROOT), PYTHONNOUSERSITE="1", WANDB_MODE="disabled")
+    e.setdefault("OMP_NUM_THREADS", "4")
+    e.setdefault("MKL_NUM_THREADS", "4")
+    e.update(kw)
     e.pop("ALLOW_TEST", None)
     return e
 
@@ -66,7 +95,7 @@ def train(name, backend, scale, batch, task="run", iters=200, warmup=0, workers=
     if "t_start" in o:
         res["gpu_util_mean"] = g.mean(o["t_start"], o["t_end"])
     DONE.mkdir(parents=True, exist_ok=True)
-    done.write_text(json.dumps(res, ensure_ascii=False, indent=1))
+    write_done(done, res)
     print(f"[{name}] {o.get('status')} it/s={o.get('it_s')} util={res.get('gpu_util_mean')} rss={res['max_rss_sum_gib']:.2f} pss={res['max_pss_sum_gib']:.2f} {res['seconds']:.0f}s", flush=True)
     return res
 
@@ -143,7 +172,7 @@ def probe(name, task, m, k, b, ckpt=1, extra=None):
     cmd = [ENVPY[m], "stage05/mem_probe.py", "--task", task, "--backend", m, "--scale", k, "--batch", b, "--ckpt", ckpt, "--out", out]
     r = monitor.run(cmd, LOG / f"{name}.log", env=env(**(extra or {})), limit_gib=48.0, cwd=ROOT)
     r["out"] = json.loads(out.read_text()) if out.exists() else {"status": "no_output"}
-    done.write_text(json.dumps(r, ensure_ascii=False, indent=1))
+    write_done(done, r)
     print(f"[{name}] {r['out'].get('status')} rc={r['rc']} {r['seconds']:.0f}s", flush=True)
     return r
 
@@ -227,7 +256,7 @@ def ckpt_run(name, task, m, k, b, mode, ckpt=0, extra=()):
     cmd = [ENVPY[m], "stage05/ckpt_equiv.py", "--task", task, "--backend", m, "--scale", k, "--batch", b, "--mode", mode, "--ckpt", ckpt, "--out", out, *extra]
     r = monitor.run(cmd, LOG / f"{name}.log", env=env(CUBLAS_WORKSPACE_CONFIG=":4096:8"), limit_gib=48.0, cwd=ROOT)
     r["out"] = json.loads(out.read_text()) if out.exists() else {"status": "crashed"}
-    done.write_text(json.dumps(r, ensure_ascii=False, indent=1))
+    write_done(done, r)
     print(f"[{name}] {r['out'].get('status')} rc={r['rc']} {r['seconds']:.0f}s", flush=True)
     return r
 
@@ -263,7 +292,7 @@ def eq_cases(m):
 def phase_dataeq():
     """D.5 보강: 학습 없이 로더 출력 비교. 기준선 반복이 같아야 비교가 성립한다. run 1회 = 프로세스 1개."""
     dump_iters = "0,1,2,3,12,100"
-    work = Path("/root/srreid_cache/eqdump")
+    work = Path(os.environ.get("SRREID_CACHE", "/root/srreid_cache")) / "eqdump"  # 로컬 NVMe 임시. 없으면 만든다
     for m in MODELS:
         b, _ = fits(m, 3)
         d = work / m
@@ -276,7 +305,7 @@ def phase_dataeq():
                 if flags:
                     cmd += ["--flags", *flags]
                 r = monitor.run(cmd, LOG / f"{name}.log", env=env(), limit_gib=48.0, cwd=ROOT)
-                (DONE / f"{name}.json").write_text(json.dumps(r, ensure_ascii=False, indent=1))
+                write_done(DONE / f"{name}.json", r)
                 print(f"[{name}] rc={r['rc']} rss={r['max_rss_sum_gib']:.2f} pss={r['max_pss_sum_gib']:.2f} {r['seconds']:.0f}s", flush=True)
 
         def cmp_(tag, label):
@@ -325,7 +354,7 @@ def phase_wnorm():
         name = f"d9_data_{m}_wnorm"
         if not (DONE / f"{name}.json").exists():
             r = monitor.run([ENVPY[m], "stage05/data_equiv.py", "run", "--backend", m, "--scale", 3, "--batch", b, "--out", d / "wnorm.json", "--flags", "memmap", "worker_norm"], LOG / f"{name}.log", env=env(), limit_gib=48.0, cwd=ROOT)
-            (DONE / f"{name}.json").write_text(json.dumps(r, ensure_ascii=False, indent=1))
+            write_done(DONE / f"{name}.json", r)
             print(f"[{name}] rc={r['rc']} {r['seconds']:.0f}s", flush=True)
             subprocess.run([PY, "stage05/data_equiv.py", "compare", "--a", d / "base.json", "--b", d / "wnorm.json", "--model", m, "--input", INPUT[3], "--comparison", "baseline vs memmap+worker_norm", "--batch", str(b)], env=env(), cwd=ROOT, check=False)
         base = json.loads((DONE / f"d10_det_{m}_base.json").read_text())["out"]["losses"]
@@ -384,6 +413,87 @@ def phase_tpfinal():
             r = train(name, m, k, b, iters=150, warmup=20, workers=4, impl="fast", flags=final[m], ckpt=c)
             if new:
                 tp_row(m, k, b, c, 4, "fast", final[m], r, note="checkpointing 속도 비 측정")
+
+
+SERVER_S2 = "새 서버(EPYC 7282, cgroup v2, 116.4GiB)"
+S2_TP = RES / "stage05_srv2_throughput.csv"
+S2_RAM = RES / "stage05_srv2_ram.csv"
+S2_TP_FIELDS = ["server", "step", "model", "input", "batch", "ckpt", "workers", "flags", "bipo", "pin", "iters", "it_s", "img_s", "gpu_util_mean", "max_rss_sum_gib", "max_pss_sum_gib",
+                "nvidia_peak_mib", "seconds", "status", "note"]
+
+
+def s2_row(step, m, k, b, c, w, flags, iters, r, note):
+    o = r["out"]
+    pin = "off" if "no_pin" in flags else "on"
+    write_row(S2_TP, S2_TP_FIELDS, {"server": SERVER_S2, "step": step, "model": m, "input": INPUT[k], "batch": b, "ckpt": c, "workers": w, "flags": "+".join(flags),
+              "bipo": "on" if m.startswith("kpr") else "해당 없음", "pin": pin, "iters": iters, "it_s": o.get("it_s", ""), "img_s": o.get("img_s", ""), "gpu_util_mean": r.get("gpu_util_mean", ""),
+              "max_rss_sum_gib": round(r["max_rss_sum_gib"], 3), "max_pss_sum_gib": round(r["max_pss_sum_gib"], 3), "nvidia_peak_mib": r.get("max_gpu_mib", ""), "seconds": round(r["seconds"], 1),
+              "status": status(r), "note": note})
+
+
+def phase_tpfinal_s2():
+    """지시 3e를 새 서버에서. 이전 서버 완료 표시(d8_*, d11_*, d12_*)는 그대로 두고 이름 끝에 _s2를 붙여 따로 기록한다.
+    이 단계 동안 다른 작업을 돌리지 않는다. cgroup v2 memory.current를 1초마다 logs/stage05/cgroup_mem_v2.csv에 남기고 끝나면 ram_join으로 단계별 피크를 낸다.
+    1) d11 최종 구성 처리량 + 학습 RAM(KPR은 공식 BIPO 켬, occluder 전부 로드) 300 iteration
+    2) d8 핀 메모리 on/off(이전 서버 d8과 같은 플래그) 300 iteration
+    3) d12 같은 배치에서 checkpointing 켬/끔 속도 비 150 iteration
+    RAM 감시 한도는 limit_gib=48 그대로(57.7GiB 기준 보수 판정)."""
+    final = {"bot": ["memmap", "worker_norm", "no_timers", "prefetch4"], "clipreid": ["memmap", "worker_norm", "no_timers", "prefetch4", "pin"],
+             "kpr": ["memmap", "mask_f32", "no_timers", "prefetch4"], "kpr_solider": ["memmap", "mask_f32", "no_timers", "prefetch4"]}
+    logger = subprocess.Popen([sys.executable, str(ROOT / "stage05" / "cgroup_log.py"), str(LOG / "cgroup_mem_v2.csv")], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        for m in MODELS:
+            for k in (3, 4):
+                b, c = fits(m, k)
+                name = f"d11_{m}_x{k}_final_s2"
+                new = not (DONE / f"{name}.json").exists()
+                r = train(name, m, k, b, iters=300, warmup=20, workers=4, impl="fast", flags=final[m], ckpt=c)
+                if new:
+                    s2_row(name, m, k, b, c, 4, final[m], 300, r, "최종 구성 처리량·학습 RAM")
+        for m in MODELS:
+            b, c = fits(m, 3)
+            for tag, flags in (("pin", ["memmap", "pin"]), ("nopin", ["memmap", "no_pin"])):
+                name = f"d8_{m}_x3_{tag}_s2"
+                new = not (DONE / f"{name}.json").exists()
+                r = train(name, m, 3, b, iters=300, warmup=20, flags=flags, ckpt=c)
+                if new:
+                    s2_row(name, m, 3, b, c, r["out"].get("args", {}).get("workers", 0), flags, 300, r, "핀 메모리 비교(이전 서버 d8과 같은 플래그)")
+        for m, k, b in (("clipreid", 4, 32), ("kpr", 3, 32), ("kpr", 4, 16), ("kpr_solider", 3, 32), ("kpr_solider", 4, 16)):
+            for c in (0, 1):
+                name = f"d12_{m}_x{k}_b{b}_ckpt{c}_s2"
+                new = not (DONE / f"{name}.json").exists()
+                r = train(name, m, k, b, iters=150, warmup=20, workers=4, impl="fast", flags=final[m], ckpt=c)
+                if new:
+                    s2_row(name, m, k, b, c, 4, final[m], 150, r, "checkpointing 속도 비")
+    finally:
+        logger.terminate()
+        logger.wait(timeout=10)
+    subprocess.run([sys.executable, str(ROOT / "stage05" / "ram_join.py")], cwd=ROOT, check=False)
+
+
+def cpu_stat():
+    try:
+        return {l.split()[0]: int(l.split()[1]) for l in open("/sys/fs/cgroup/cpu.stat") if len(l.split()) == 2}
+    except OSError:
+        return {}
+
+
+def phase_threads_s2():
+    """3e 후속 진단(새 서버). KPR ×3 처리량이 이전 서버보다 약 30% 낮고 GPU 사용률이 58%라 원인을 본다.
+    가설: torch 기본 intra-op 스레드 64개(nproc)가 cgroup CPU 할당 13.6코어를 넘어 스로틀링된다. OMP/MKL 스레드만 바꾸고 나머지는 d11과 같다.
+    학습 레시피·수치 결정에는 영향이 없는 측정이며 채택 여부는 사용자가 정한다."""
+    final = ["memmap", "mask_f32", "no_timers", "prefetch4"]
+    for m in ("kpr", "kpr_solider"):
+        b, c = fits(m, 3)
+        for nt in (4, 8):
+            name = f"d13_{m}_x3_final_omp{nt}_s2"
+            new = not (DONE / f"{name}.json").exists()
+            c0 = cpu_stat()
+            r = train(name, m, 3, b, iters=300, warmup=20, workers=4, impl="fast", flags=final, ckpt=c, extra_env={"OMP_NUM_THREADS": str(nt), "MKL_NUM_THREADS": str(nt)})
+            c1 = cpu_stat()
+            if new:
+                d = {k: c1.get(k, 0) - c0.get(k, 0) for k in ("nr_periods", "nr_throttled", "throttled_usec", "user_usec", "system_usec")}
+                s2_row(name, m, 3, b, c, 4, final + [f"omp{nt}"], 300, r, "스레드 진단 cpu.stat 차이 " + " ".join(f"{k}={v}" for k, v in d.items()))
 
 
 def phase_extra():
@@ -521,6 +631,8 @@ def phase_concurrent():
 
 def main():
     LOG.mkdir(parents=True, exist_ok=True)
+    DONE.mkdir(parents=True, exist_ok=True)
+    quarantine_bad_done()
     for p in sys.argv[1:]:
         globals()[f"phase_{p}"]()
     print("run_train 종료", flush=True)

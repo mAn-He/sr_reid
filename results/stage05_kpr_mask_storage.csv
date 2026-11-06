@@ -1,0 +1,16 @@
+format,scale,split,n_images,bytes_per_image,total_bytes,total_gib
+"저장 해상도 36x17x9 float32 (채택, 현재 data/kpr_cache)",배율 무관,bounding_box_train,12936,22032,285005952,0.265
+"저장 해상도 36x17x9 float32 (채택, 현재 data/kpr_cache)",배율 무관,query,3368,22032,74203776,0.069
+"저장 해상도 36x17x9 float32 (채택, 현재 data/kpr_cache)",배율 무관,bounding_box_test,19732,22032,434735424,0.405
+"로더 target 6x96x48 float32 (가상, 사전 리사이즈 시)",x3,bounding_box_train,12936,110592,1430618112,1.332
+"로더 target 6x96x48 float32 (가상, 사전 리사이즈 시)",x3,query,3368,110592,372473856,0.347
+"로더 target 6x96x48 float32 (가상, 사전 리사이즈 시)",x3,bounding_box_test,19732,110592,2182201344,2.032
+로더 중간 5x384x192 float32 (가상),x3,bounding_box_train,12936,1474560,19074908160,17.765
+로더 중간 5x384x192 float32 (가상),x3,query,3368,1474560,4966318080,4.625
+로더 중간 5x384x192 float32 (가상),x3,bounding_box_test,19732,1474560,29096017920,27.098
+"로더 target 6x128x64 float32 (가상, 사전 리사이즈 시)",x4,bounding_box_train,12936,196608,2543321088,2.369
+"로더 target 6x128x64 float32 (가상, 사전 리사이즈 시)",x4,query,3368,196608,662175744,0.617
+"로더 target 6x128x64 float32 (가상, 사전 리사이즈 시)",x4,bounding_box_test,19732,196608,3879469056,3.613
+로더 중간 5x512x256 float32 (가상),x4,bounding_box_train,12936,2621440,33910947840,31.582
+로더 중간 5x512x256 float32 (가상),x4,query,3368,2621440,8829009920,8.223
+로더 중간 5x512x256 float32 (가상),x4,bounding_box_test,19732,2621440,51726254080,48.174

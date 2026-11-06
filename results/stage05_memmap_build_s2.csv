@@ -1,0 +1,3 @@
+server,cond,k,split,n_images,bytes,seconds,workers,source_cache,note
+"새 서버(EPYC 7282, cgroup v2, 116.4GiB)",bicubic,3,bounding_box_train,12936,2861236224,16.65,12,warm,"/workspace PNG→/root u8, 같은 원본을 3e에서 읽은 직후라 페이지 캐시가 따뜻함"
+"새 서버(EPYC 7282, cgroup v2, 116.4GiB)",bicubic,4,bounding_box_train,12936,5086642176,20.73,12,warm,같음

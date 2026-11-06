@@ -16,3 +16,9 @@
 - H100 80GB: PCIe 1.99~3.29, SXM 2.69~6.88
 
 제조사 관련 또는 집계 사이트가 섞여 있어 값이 서로 어긋난다. 대여 전에 실제 가격을 확인한다.
+
+## 2026-11-06 재검색 (RunPod, on-demand, USD/h)
+- RunPod 공식 가격 페이지(2026-07 기준 표기): L40S 48GB 0.79, A100 80GB PCIe 1.39 / SXM 1.59, H100 80GB 1.99부터. https://www.runpod.io/gpu-cloud/pricing
+- 제3자 추적: L40S 0.86~0.99, H100 2.69~3.99. https://www.spheron.network/blog/runpod-h100-pricing-2026/ , https://computeprices.com/providers/runpod/gpus/a100-pcie-80gb , https://gpu-cost.pages.dev/provider/runpod/
+- 비용 추정(`STAGE12_PLAN.md`)은 공식 페이지 값을 쓴다. 대여 직전에 다시 확인한다.
+- 대여 서버 CPU 참고: 새 서버(EPYC 7282, cgroup 13.6코어)에서 KPR ×3 b48 학습이 CPU 스로틀링으로 [이전] 대비 −30%였다(`STAGE05_REPORT.md` 4.3절). CPU 할당을 확인하고 고른다.

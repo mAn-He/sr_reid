@@ -7,7 +7,8 @@ from PIL import Image
 from skimage.color import deltaE_ciede2000, rgb2lab
 
 ROOT = Path(__file__).resolve().parents[1]
-DREAMSIM_CACHE = ROOT / "weights" / "stage05" / "dreamsim"
+DREAMSIM_CACHE = ROOT / "weights" / "stage05" / "dreamsim"  # 실제 디렉터리(2026-11-06 재다운로드). /root 링크 금지
+os.environ.setdefault("TORCH_HOME", "/workspace/weights/torch")  # pyiqa LPIPS·DISTS·vgg16 가중치. 재시작 후에도 남게 /workspace
 
 
 def psnr(a, b, data_range=255.0):
