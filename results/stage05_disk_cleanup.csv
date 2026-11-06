@@ -1,0 +1,9 @@
+path,bytes,files,reason,regen,deleted_at
+runs/smoke_001,1203131037,1703,파이프라인 스모크 출력,"scripts/smoke_gate.py, 수 분",2026-11-01 06:30:07
+runs/smoke_data,33401515,262,합성 스모크 데이터,"tests/make_synth_market.py, 수 분",2026-11-01 06:30:07
+data/bicubic_x2,507512150,12936,"256×128 측정 PNG, Stage 0.5 측정 끝남","data/make_lr.py, 1분",2026-11-01 06:30:20
+data/processed/train_hr256.npy,1114964096,1,파일럿 학습 캐시,"data/make_lr.py, 수 분",2026-11-01 06:30:20
+data/processed/train_lr256.npy,1114964096,1,파일럿 학습 캐시,"data/make_lr.py, 수 분",2026-11-01 06:30:20
+data/kpr_cache/masks/bounding_box_train/masks_u8.npy,71251616,1,"u8 마스크, float32 확정으로 폐기","stage05/kpr_cache.py, 수 분",2026-11-01 06:30:20
+data/kpr_cache/masks/query/masks_u8.npy,18551072,1,u8 마스크,stage05/kpr_cache.py,2026-11-01 06:30:20
+data/kpr_cache/masks/bounding_box_test/masks_u8.npy,108683984,1,u8 마스크,stage05/kpr_cache.py,2026-11-01 06:30:20

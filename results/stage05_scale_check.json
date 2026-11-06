@@ -1,0 +1,101 @@
+{
+ "formula": "(c+0.5)*k-0.5",
+ "old_wrong_formula": "c*k",
+ "threshold_px": 1.0,
+ "n_keypoint_files": 2000,
+ "n_mask_files": 200,
+ "split": "bounding_box_train",
+ "x3": {
+  "keypoints": {
+   "max_err_vs_pixel_center_px": 0.0,
+   "max_gap_vs_old_c_times_k_px": 1.0000000000000568,
+   "theory_gap_(k-1)/2": 1.0,
+   "max_confidence_change": 0.0
+  },
+  "pure_nearest_formula_check_px": 3.4095268901523923e-06,
+  "masks_nearest": {
+   "n_part_channels": 7200,
+   "max_gap_vs_pixel_center_px": 3.444755884735031,
+   "max_gap_vs_old_c_times_k_px": 2.6894368912752924,
+   "within_threshold": false,
+   "used_by_loader": false
+  },
+  "masks_bilinear": {
+   "n_part_channels": 7200,
+   "max_gap_vs_pixel_center_px": 0.09208232923043624,
+   "max_gap_vs_old_c_times_k_px": 1.0920823292304362,
+   "within_threshold": true,
+   "used_by_loader": true
+  },
+  "masks_loader_path": {
+   "grid": "96x48",
+   "n_part_channels": 7200,
+   "unit": "H/4 격자 픽셀(이미지 좌표는 ×4)",
+   "vs_stored_half_pixel": {
+    "mean": 0.02007297515358568,
+    "p99": 0.08779571478682613,
+    "max": 0.19047782406921243
+   },
+   "vs_stored_half_pixel_mass_away_from_edge": {
+    "n": 3806,
+    "mean": 0.005650277355197225,
+    "p99": 0.01800224625057679,
+    "max": 0.044223958879626935
+   },
+   "vs_x1_loader_(c+0.5)k-0.5": {
+    "mean": 0.03156115079596373,
+    "p99": 0.09825345291655767,
+    "max": 0.19017218214403186
+   },
+   "within_threshold_mean": true
+  },
+  "passed": true
+ },
+ "x4": {
+  "keypoints": {
+   "max_err_vs_pixel_center_px": 0.0,
+   "max_gap_vs_old_c_times_k_px": 1.5000000000000568,
+   "theory_gap_(k-1)/2": 1.5,
+   "max_confidence_change": 0.0
+  },
+  "pure_nearest_formula_check_px": 6.733352144294713e-06,
+  "masks_nearest": {
+   "n_part_channels": 7200,
+   "max_gap_vs_pixel_center_px": 6.055640787256834,
+   "max_gap_vs_old_c_times_k_px": 4.555640787256834,
+   "within_threshold": false,
+   "used_by_loader": false
+  },
+  "masks_bilinear": {
+   "n_part_channels": 7200,
+   "max_gap_vs_pixel_center_px": 0.10381637470925398,
+   "max_gap_vs_old_c_times_k_px": 1.603816374709254,
+   "within_threshold": true,
+   "used_by_loader": true
+  },
+  "masks_loader_path": {
+   "grid": "128x64",
+   "n_part_channels": 7200,
+   "unit": "H/4 격자 픽셀(이미지 좌표는 ×4)",
+   "vs_stored_half_pixel": {
+    "mean": 0.02488101118958817,
+    "p99": 0.11637203997378977,
+    "max": 0.24237223333224733
+   },
+   "vs_stored_half_pixel_mass_away_from_edge": {
+    "n": 3806,
+    "mean": 0.0041074639242096095,
+    "p99": 0.014547031272046401,
+    "max": 0.0225397782372454
+   },
+   "vs_x1_loader_(c+0.5)k-0.5": {
+    "mean": 0.041037981972178755,
+    "p99": 0.12922870199544975,
+    "max": 0.27848267005612115
+   },
+   "within_threshold_mean": true
+  },
+  "passed": true
+ },
+ "passed": true
+}

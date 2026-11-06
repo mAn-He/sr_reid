@@ -181,3 +181,24 @@ ROOT_DIR: ../data vs. None) for config key: DATASETS
 ```
 
 가중치 sha256은 `weights/stage0/SHA256.csv`, 데이터 sha256은 `data/bicubic_x{2,3}_manifest.csv`에 있습니다.
+
+## 정정 (Stage 0.5에서 추가, 2026-10-31)
+
+**1. 기준식 오류 정정(기준 완화 아님).** 위 표의 마스크 기준 `c·k`는 수식 오류였습니다. nearest 확대에서 원래 픽셀 i는 `[ik, (i+1)k)` 구간이 되므로 기대 무게중심은 `(c+0.5)·k−0.5`입니다. ×3의 1.037px 미통과는 이 오류 때문입니다. 임계값 1px는 그대로이며, ×3·×4 재검증 결과는 아래와 같습니다 (`results/stage05_scale_check.json`, train 2,000 키포인트 파일, 200 마스크 파일, 7,200 파트 채널).
+
+| 배율 | 키포인트 최대 오차 | 정수배 nearest 수식 점검 | 로더 경로(bilinear) 마스크 | 옛 식 `c·k` 기준 (참고) | 판정 |
+|---|---:|---:|---:|---:|---|
+| ×3 | 0.0px | 3.4e-6px | 0.092px | 1.092px | 통과 |
+| ×4 | 0.0px | 6.7e-6px | 0.104px | 1.604px | 통과 |
+
+저장 해상도 17×9에서 비정수배 nearest로 바로 그리면 차이가 ×3 3.44px, ×4 6.06px까지 납니다. 이는 cv2 nearest의 반올림 때문이고, KPR 로더는 이 경로를 쓰지 않습니다 (`torchreid/data/masks_transforms/resize.py:49-53`, `default_config.py:214`). 참고값으로만 남겼습니다.
+
+키포인트와 마스크 모두 픽셀 중심 규약으로 통일합니다.
+
+**2. 하드웨어 표기.** 파드 한도는 RAM 57.7GiB(cgroup `memory.limit_in_bytes` 61,999,996,928), CPU 13.6코어(`cfs_quota` 1,360,000/100,000)입니다. Stage 0 작업 중 제가 말한 251GB, 64코어는 호스트 값이었습니다.
+
+**3. 139줄의 fixbase 설명.** `fixbase_epoch=20`이 고정하는 것은 백본이 아니라 `masks_patch_embed`입니다 (`engine.py:557-562`, `docs/PIPELINE_kpr_solider.md`). 측정이 보수적이라는 결론은 다시 확인이 필요합니다.
+
+**4. Stage 0 평가 RSS.** Stage 0의 "extract" RSS에는 공식 `_feature_extraction`의 누적이 들어 있지 않습니다. `extract_batch`가 출력을 버렸기 때문입니다. 평가 RAM은 `STAGE05_REPORT.md` 2절을 보십시오.
+
+**5. KPR split 오차.** 123줄의 불일치는 측정 코드가 query를 쪼갠 데서 나왔습니다 (`stage0/worker.py:130-133`). 공식 경로는 gallery만 나눕니다. 또한 Stage 0은 gallery 19,732장(pid −1 포함)으로 쟀고, 공식 로더는 15,913장만 씁니다.

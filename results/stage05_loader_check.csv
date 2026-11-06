@@ -1,0 +1,49 @@
+model,check,split,n,mismatch,max_abs_diff,note
+bot,file_list,bounding_box_train,12936,0,,어댑터 12936장
+bot,pid,bounding_box_train,12936,0,,
+bot,camid,bounding_box_train,12936,0,,
+bot,pixels_memmap_vs_official_decoder,bounding_box_train,12936,0,0,PIL
+bot,file_list,query,3368,0,,어댑터 3368장
+bot,pid,query,3368,0,,
+bot,camid,query,3368,0,,
+bot,pixels_memmap_vs_official_decoder,query,3368,0,0,PIL
+bot,file_list,bounding_box_test,15913,0,,어댑터 15913장
+bot,pid,bounding_box_test,15913,0,,
+bot,camid,bounding_box_test,15913,0,,
+bot,pixels_memmap_vs_official_decoder,bounding_box_test,15913,0,0,PIL
+bot,sampler_epoch,bounding_box_train,11712,,,"직접 구현 pk_batches. 공식 sampler와 순서 비교 대상 아님. 공식 epoch 11712장, 어댑터 11712장, 커버 이미지 공식 11684 어댑터 11686"
+clipreid,file_list,bounding_box_train,12936,0,,어댑터 12936장
+clipreid,pid,bounding_box_train,12936,0,,
+clipreid,camid,bounding_box_train,12936,0,,
+clipreid,pixels_memmap_vs_official_decoder,bounding_box_train,12936,0,0,PIL
+clipreid,file_list,query,3368,0,,어댑터 3368장
+clipreid,pid,query,3368,0,,
+clipreid,camid,query,3368,0,,
+clipreid,pixels_memmap_vs_official_decoder,query,3368,0,0,PIL
+clipreid,file_list,bounding_box_test,15913,0,,어댑터 15913장
+clipreid,pid,bounding_box_test,15913,0,,
+clipreid,camid,bounding_box_test,15913,0,,
+clipreid,pixels_memmap_vs_official_decoder,bounding_box_test,15913,0,0,PIL
+clipreid,sampler_epoch,bounding_box_train,11712,0,,"같은 seed, 이름 정렬 목록에서 공식 sampler 1 epoch"
+kpr,file_list,bounding_box_train,12936,0,,어댑터 12936장
+kpr,pid,bounding_box_train,12936,0,,
+kpr,camid,bounding_box_train,12936,0,,
+kpr,pixels_memmap_vs_official_decoder,bounding_box_train,12936,0,0,cv2.imread
+kpr,keypoints,bounding_box_train,12936,0,,공식 read_keypoints와 x1 캐시 array_equal
+kpr,masks_f32,bounding_box_train,12936,0,,공식 read_masks와 array_equal
+kpr,masks_u8_quant,bounding_box_train,12936,0,0.001961,오차 상한 1/510≈0.00196
+kpr,file_list,query,3368,0,,어댑터 3368장
+kpr,pid,query,3368,0,,
+kpr,camid,query,3368,0,,
+kpr,pixels_memmap_vs_official_decoder,query,3368,0,0,cv2.imread
+kpr,keypoints,query,3368,0,,공식 read_keypoints와 x1 캐시 array_equal
+kpr,masks_f32,query,3368,0,,공식 read_masks와 array_equal
+kpr,masks_u8_quant,query,3368,0,0.001961,오차 상한 1/510≈0.00196
+kpr,file_list,bounding_box_test,15913,0,,어댑터 15913장
+kpr,pid,bounding_box_test,15913,0,,
+kpr,camid,bounding_box_test,15913,0,,
+kpr,pixels_memmap_vs_official_decoder,bounding_box_test,15913,0,0,cv2.imread
+kpr,keypoints,bounding_box_test,15913,0,,공식 read_keypoints와 x1 캐시 array_equal
+kpr,masks_f32,bounding_box_test,15913,0,,공식 read_masks와 array_equal
+kpr,masks_u8_quant,bounding_box_test,15913,0,0.001961,오차 상한 1/510≈0.00196
+kpr,sampler_epoch,bounding_box_train,11712,0,,"같은 seed, 이름 정렬 목록에서 공식 sampler 1 epoch"

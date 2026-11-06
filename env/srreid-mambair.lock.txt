@@ -1,0 +1,9 @@
+causal-conv1d==1.0.0
+einops==0.7.0
+huggingface-hub==0.20.3
+mamba-ssm==1.0.1
+regex==2026.9.29
+safetensors==0.8.0
+timm==0.9.12
+tokenizers==0.15.2
+transformers==4.37.1

@@ -1,0 +1,97 @@
+model,phase,mode,input,batch,workers,n_query,n_gallery,max_rss_sum_gib,max_pss_sum_gib,time_v_max_rss_gib,seconds,rc,killed_over_limit,status,note
+bot,eval_equiv,light_extract,256x128,128,8,500,5000,5.861,2.155,1.297,33.1,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+bot,eval_equiv,light_stream,256x128,128,8,500,5000,0.538,0.527,0.595,16.3,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+bot,eval_equiv,official_subset,256x128,128,8,500,5000,0.536,0.529,0.523,19.6,0,False,ok,
+bot,baseline,light_extract,256x128,128,8,3368,15913,6.596,2.829,2.037,34.6,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+bot,baseline,light_stream,256x128,128,8,3368,15913,1.067,1.055,1.063,31.1,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+clipreid,eval_equiv,light_extract,256x128,64,8,500,5000,16.089,4.315,3.396,43.3,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+clipreid,eval_equiv,light_stream,256x128,64,8,500,5000,0.39,0.385,0.379,9.2,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+clipreid,eval_equiv,official_subset,256x128,64,8,500,5000,16.56,4.33,3.466,25.9,0,False,ok,
+clipreid,baseline,light_extract,256x128,64,8,3368,15913,16.344,4.773,3.544,41.6,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+clipreid,baseline,light_stream,256x128,64,8,3368,15913,0.723,0.717,0.702,26.0,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+kpr,eval_equiv,light_extract,384x128,64,8,500,5000,62.881,17.523,14.909,213.4,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+kpr,eval_equiv,light_stream,384x128,64,8,500,5000,2.914,2.948,3.187,37.7,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+kpr,eval_equiv,official_subset,384x128,64,8,500,5000,104.997,52.259,0,220.3,-9,True,over_ram_limit,"공식 평가기, visrank 끔"
+kpr,baseline,light_extract,384x128,64,8,3368,15913,80.912,36.451,33.31,299.1,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+kpr,baseline,light_stream,384x128,64,8,3368,15913,4.632,4.387,5.195,97.7,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+kpr_solider,eval_equiv,light_extract,384x128,64,8,500,5000,66.556,18.534,15.905,226.4,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+kpr_solider,eval_equiv,light_stream,384x128,64,8,500,5000,2.99,2.979,3.199,52.1,0,False,ok,"공개 가중치, 공식 입력, 부분집합"
+kpr_solider,eval_equiv,official_subset,384x128,64,8,500,5000,104.53,52.887,0,210.3,-9,True,over_ram_limit,"공식 평가기, visrank 끔"
+kpr_solider,baseline,light_extract,384x128,64,8,3368,15913,75.85,30.499,27.726,281.3,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+kpr_solider,baseline,light_stream,384x128,64,8,3368,15913,4.213,4.17,5.228,76.5,0,False,ok,"공개 가중치, 공식 입력, 전체 test"
+bot,eval,light_extract,384x192,128,8,3368,15913,8.218,4.644,3.109,57.4,0,False,ok,지표 비기록(공개 가중치 아님)
+bot,eval,light_stream,384x192,128,8,3368,15913,1.065,1.056,1.064,33.3,0,False,ok,지표 비기록(공개 가중치 아님)
+bot,eval,official_full,384x192,128,8,3368,15913,1.933,1.927,1.921,129.0,0,False,ok,"공식 전체 거리 행렬+eval_func, 특징 재사용"
+clipreid,eval,light_extract,384x192,64,8,3368,15913,15.324,4.744,3.539,86.4,0,False,ok,지표 비기록(공개 가중치 아님)
+clipreid,eval,light_stream,384x192,64,8,3368,15913,0.739,0.733,0.723,27.9,0,False,ok,지표 비기록(공개 가중치 아님)
+clipreid,eval,official_full,384x192,64,8,3368,15913,15.21,4.696,4.756,76.2,0,False,ok,공식 do_inference
+kpr,eval,a_official_visrank,384x192,64,8,100,1000,82.445,23.097,23.221,243.3,1,False,failed,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,b_visrank_off,384x192,64,8,100,1000,85.401,23.48,23.501,233.5,0,False,ok,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,a_official_visrank,384x192,64,8,200,2000,113.297,40.506,40.694,289.7,1,False,failed,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,b_visrank_off,384x192,64,8,200,2000,118.316,41.088,41.275,278.2,0,False,ok,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,light_extract,384x192,64,8,3368,15913,101.162,43.82,34.349,368.9,0,False,ok,"c: 경량 평가기, 공개 가중치 입력 크기만 변경, 지표 비사용"
+kpr,eval,light_stream,384x192,64,8,3368,15913,4.793,4.4,5.213,78.3,0,False,ok,"c: 경량 평가기, 공개 가중치 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,a_official_visrank,384x192,64,8,100,1000,104.169,26.063,26.232,232.0,1,False,failed,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,b_visrank_off,384x192,64,8,100,1000,83.464,23.182,23.307,235.6,0,False,ok,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,a_official_visrank,384x192,64,8,200,2000,98.131,38.01,38.261,270.9,1,False,failed,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,b_visrank_off,384x192,64,8,200,2000,101.486,38.603,38.666,263.7,0,False,ok,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,light_extract,384x192,64,8,3368,15913,105.571,46.917,39.702,353.7,0,False,ok,"c: 경량 평가기, 공개 가중치 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,light_stream,384x192,64,8,3368,15913,5.115,4.853,5.209,77.4,0,False,ok,"c: 경량 평가기, 공개 가중치 입력 크기만 변경, 지표 비사용"
+bot,eval,light_extract,512x256,128,8,3368,15913,12.753,9.273,5.282,70.7,0,False,ok,지표 비기록(공개 가중치 아님)
+bot,eval,light_stream,512x256,128,8,3368,15913,1.043,1.031,1.03,37.3,0,False,ok,지표 비기록(공개 가중치 아님)
+bot,eval,official_full,512x256,128,8,3368,15913,1.93,1.924,1.918,128.7,0,False,ok,"공식 전체 거리 행렬+eval_func, 특징 재사용"
+clipreid,eval,light_extract,512x256,64,8,3368,15913,15.648,5.304,3.522,127.3,0,False,ok,지표 비기록(공개 가중치 아님)
+clipreid,eval,light_stream,512x256,64,8,3368,15913,0.737,0.732,0.724,30.9,0,False,ok,지표 비기록(공개 가중치 아님)
+clipreid,eval,official_full,512x256,64,8,3368,15913,15.357,4.998,4.748,130.0,0,False,ok,공식 do_inference
+kpr,eval,a_official_visrank,512x256,32,8,100,1000,171.513,38.734,38.902,303.5,1,False,failed,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,b_visrank_off,512x256,32,8,100,1000,170.737,38.504,38.791,306.8,0,False,ok,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,a_official_visrank,512x256,32,8,200,2000,219.308,52.225,0,330.6,-9,True,over_ram_limit,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,b_visrank_off,512x256,32,8,200,2000,142.673,48.96,0,313.5,-9,True,over_ram_limit,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr,eval,light_extract,512x256,32,8,3368,15913,203.869,50.844,0,365.8,-9,True,over_ram_limit,"c: 경량 평가기, 공개 가중치 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,a_official_visrank,512x256,32,8,100,1000,132.387,34.276,34.584,290.3,1,False,failed,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,b_visrank_off,512x256,32,8,100,1000,127.836,33.878,34.069,288.0,0,False,ok,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,a_official_visrank,512x256,32,8,200,2000,143.639,51.646,0,298.5,-9,True,over_ram_limit,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,b_visrank_off,512x256,32,8,200,2000,149.671,55.055,0,308.7,-9,True,over_ram_limit,"공식 경로 부분집합, 전체는 역산표 기준 한도 초과"
+kpr_solider,eval,light_extract,512x256,32,8,3368,15913,215.475,50.273,0,359.4,-9,True,over_ram_limit,"c: 경량 평가기, 공개 가중치 입력 크기만 변경, 지표 비사용"
+kpr,baseline,c_light_extract_fixed,384x128,64,8,3368,15913,30.935,8.848,3.921,149.4,0,False,ok,핀 메모리·occluder 끔. 특징이 public_full과 같은지 확인
+kpr,baseline,c_light_stream_fixed,384x128,64,8,3368,15913,4.907,4.569,5.209,78.8,0,False,ok,핀 메모리·occluder 끔. 특징이 public_full과 같은지 확인
+kpr,eval,c_light_extract_fixed,384x192,64,8,3368,15913,34.797,12.438,4.087,190.9,0,False,ok,"핀 메모리·occluder 끔. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr,eval,c_light_stream_fixed,384x192,64,8,3368,15913,4.679,4.507,5.228,76.0,0,False,ok,"핀 메모리·occluder 끔. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr,eval,c_light_extract_fixed,512x256,32,8,3368,15913,36.632,14.522,4.325,281.4,1,False,failed,"핀 메모리·occluder 끔. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr_solider,baseline,c_light_extract_fixed,384x128,64,8,3368,15913,30.62,8.203,3.876,167.7,0,False,ok,핀 메모리·occluder 끔. 특징이 public_full과 같은지 확인
+kpr_solider,baseline,c_light_stream_fixed,384x128,64,8,3368,15913,4.103,4.202,5.195,76.4,0,False,ok,핀 메모리·occluder 끔. 특징이 public_full과 같은지 확인
+kpr_solider,eval,c_light_extract_fixed,384x192,64,8,3368,15913,35.009,12.425,4.123,200.0,0,False,ok,"핀 메모리·occluder 끔. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,c_light_stream_fixed,384x192,64,8,3368,15913,5.22,4.572,5.198,77.7,0,False,ok,"핀 메모리·occluder 끔. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,c_light_extract_fixed,512x256,32,8,3368,15913,36.864,14.232,4.326,283.3,1,False,failed,"핀 메모리·occluder 끔. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr,eval_equiv,official_subset_nopin,384x128,64,4,500,5000,52.419,40.079,42.31,150.7,0,False,ok,"공식 evaluate 경로, visrank·핀 메모리·occluder 끔, 워커 4"
+kpr_solider,eval_equiv,official_subset_nopin,384x128,64,4,500,5000,52.255,42.338,42.335,135.3,0,False,ok,"공식 evaluate 경로, visrank·핀 메모리·occluder 끔, 워커 4"
+kpr,eval,a_official_visrank_match,384x192,64,8,100,1000,82.871,23.215,23.241,251.6,0,False,ok,양성 있는 query로 한정한 부분집합
+kpr,eval,a_official_visrank_match,512x256,32,8,100,1000,152.923,36.416,36.705,321.3,0,False,ok,양성 있는 query로 한정한 부분집합
+kpr,eval,c_light_extract_fixed,512x256,32,8,3368,15913,36.77,14.703,4.401,296.3,0,False,ok,"핀 메모리·occluder 끔, nofile 상향. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr,eval,c_light_stream_fixed,512x256,32,8,3368,15913,4.006,4.094,5.201,78.4,0,False,ok,"핀 메모리·occluder 끔, nofile 상향. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,c_light_extract_fixed,512x256,32,8,3368,15913,37.039,14.924,4.382,298.7,0,False,ok,"핀 메모리·occluder 끔, nofile 상향. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+kpr_solider,eval,c_light_stream_fixed,512x256,32,8,3368,15913,4.48,5.132,5.185,78.7,0,False,ok,"핀 메모리·occluder 끔, nofile 상향. 공개 가중치, 입력 크기만 변경, 지표 비사용"
+bot,train,train_official_loader,384x192,64,4,,,4.542,1.858,1.617,117.3,0,False,ok,"500 iteration, it/s=5.446192066323111"
+bot,train,train_official_loader,384x192,64,8,,,7.895,2.541,2.118,112.5,0,False,ok,"500 iteration, it/s=5.6558470625962585"
+bot,train,train_official_loader,512x256,64,4,,,5.243,2.664,2.226,165.5,0,False,ok,"500 iteration, it/s=3.347973534648711"
+bot,train,train_official_loader,512x256,64,8,,,9.279,3.902,3.219,177.7,0,False,ok,"500 iteration, it/s=3.264709532572808"
+clipreid,train,train_official_loader,384x192,64,4,,,15.193,4.181,3.514,168.0,0,False,ok,"500 iteration, it/s=3.646157095337187"
+clipreid,train,train_official_loader,384x192,64,8,,,26.623,4.58,3.501,165.9,0,False,ok,"500 iteration, it/s=3.6663667448578345"
+clipreid,train,train_official_loader,512x256,64,4,,,15.446,4.516,3.529,329.2,0,False,ok,"500 iteration, it/s=1.6008065400452598"
+clipreid,train,train_official_loader,512x256,64,8,,,27.35,5.329,3.559,348.4,0,False,ok,"500 iteration, it/s=1.574177022812418"
+kpr,train,train_official_loader,384x192,48,4,,,59.474,20.959,14.911,495.6,0,False,ok,"500 iteration, it/s=1.6514927127296308"
+kpr,train,d_mask_u8_memmap,384x192,48,4,,,46.349,16.397,11.439,459.9,0,False,ok,"500 iteration, it/s=1.779677217115688"
+kpr,train,train_official_loader,384x192,48,8,,,85.958,26.56,13.859,480.1,0,False,ok,"500 iteration, it/s=1.7143326749576868"
+kpr,train,d_mask_u8_memmap,384x192,48,8,,,79.707,20.329,13.869,472.0,0,False,ok,"500 iteration, it/s=1.7087299731121248"
+kpr,train,train_official_loader,512x256,24,4,,,76.464,27.0,18.352,484.0,0,False,ok,"500 iteration, it/s=2.054203467339161"
+kpr,train,d_mask_u8_memmap,512x256,24,4,,,58.745,20.808,14.48,465.0,0,False,ok,"500 iteration, it/s=2.127088050058166"
+kpr,train,train_official_loader,512x256,24,8,,,233.495,42.476,31.651,514.0,0,False,ok,"500 iteration, it/s=1.9542314604479045"
+kpr,train,d_mask_u8_memmap,512x256,24,8,,,104.28,24.436,16.963,472.6,0,False,ok,"500 iteration, it/s=2.075437259208201"
+kpr_solider,train,train_official_loader,384x192,48,4,,,49.286,20.5,11.088,519.0,0,False,ok,"500 iteration, it/s=1.5126050592480962"
+kpr_solider,train,d_mask_u8_memmap,384x192,48,4,,,50.26,17.961,12.571,463.4,0,False,ok,"500 iteration, it/s=1.7538811745558174"
+kpr_solider,train,train_official_loader,384x192,48,8,,,96.311,25.468,16.366,494.9,0,False,ok,"500 iteration, it/s=1.6705502809099704"
+kpr_solider,train,d_mask_u8_memmap,384x192,48,8,,,77.701,19.638,13.679,465.5,0,False,ok,"500 iteration, it/s=1.6980018818739575"
+kpr_solider,train,train_official_loader,512x256,24,4,,,60.139,24.556,14.594,489.9,0,False,ok,"500 iteration, it/s=1.9946142331627634"
+kpr_solider,train,d_mask_u8_memmap,512x256,24,4,,,62.381,22.112,14.863,468.9,0,False,ok,"500 iteration, it/s=2.1210563721889497"
+kpr_solider,train,train_official_loader,512x256,24,8,,,120.29,30.452,19.047,471.7,0,False,ok,"500 iteration, it/s=2.049600149895844"
+kpr_solider,train,d_mask_u8_memmap,512x256,24,8,,,108.6,26.14,17.413,469.2,0,False,ok,"500 iteration, it/s=2.0468092539828793"

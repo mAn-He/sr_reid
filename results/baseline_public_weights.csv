@@ -1,0 +1,5 @@
+model,input,weights,evaluator,mAP,rank1,rank5,rank10,n_query,published_mAP,published_rank1,published_source,note
+bot,256x128,공개 가중치,"경량(스트리밍, 블록 256/512/1024 동일)",85.95,94.63,98.22,99.02,3368,85.9,94.5,"reid-strong-baseline README Market1501 ResNet50 (center loss 포함 모델, 공개 가중치 파일명 rank1_945)",참고 행. 학습하지 않음. re-ranking 없음
+clipreid,256x128,공개 가중치,"경량(스트리밍, 블록 256/512/1024 동일)",89.66,95.43,98.31,98.99,3368,89.6,95.5,공개 가중치 테스트 로그 clipreid_vit_market_test_log.txt,참고 행. 학습하지 않음. re-ranking 없음
+kpr,384x128,공개 가중치,"경량(스트리밍, 블록 256/512/1024 동일)",89.59,95.87,98.57,99.26,3368,89.58,95.87,공개 가중치 파일명 kpr_market_IN_89.58_95.87,참고 행. 학습하지 않음. re-ranking 없음
+kpr_solider,384x128,공개 가중치,"경량(스트리밍, 블록 256/512/1024 동일)",93.25,96.59,98.81,99.26,3368,93.25,96.59,공개 가중치 파일명 kpr_market_SOLIDER_93.25_96.59,참고 행. 학습하지 않음. re-ranking 없음

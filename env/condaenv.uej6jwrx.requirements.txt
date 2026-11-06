@@ -1,0 +1,18 @@
+--extra-index-url https://download.pytorch.org/whl/cu117
+torch==2.0.1+cu117
+torchvision==0.15.2+cu117
+numpy==1.24.3
+pillow==9.5.0
+opencv-python-headless==4.9.0.80
+einops==0.7.0
+timm==0.9.12
+transformers==4.37.1
+addict==2.4.0
+lmdb==1.4.1
+pyyaml==6.0.1
+scipy==1.10.1
+scikit-image==0.21.0
+tqdm==4.66.1
+yapf==0.40.2
+tensorboard
+future

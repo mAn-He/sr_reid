@@ -13,3 +13,14 @@ __pycache__/
 data/bicubic_x*/
 data/kpr/
 data/kpr_annotations/
+data/kpr_cache/
+data/sr_input/
+data/attributes/
+data/bicubic/
+data/lanczos/
+data/realesrgan/
+data/osdhuman/
+data/swinir/
+data/hat/
+data/mambairv2/
+data/pisa_sr_sem*/

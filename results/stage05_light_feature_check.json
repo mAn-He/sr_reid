@@ -1,0 +1,142 @@
+{
+ "kpr/query/cam.npy": {
+  "shape": [
+   3368
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/query/feat.npy": {
+  "shape": [
+   3368,
+   6,
+   512
+  ],
+  "dtype": "float32",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/query/pid.npy": {
+  "shape": [
+   3368
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/query/vis.npy": {
+  "shape": [
+   3368,
+   6
+  ],
+  "dtype": "bool",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/gallery/cam.npy": {
+  "shape": [
+   15913
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/gallery/feat.npy": {
+  "shape": [
+   15913,
+   6,
+   512
+  ],
+  "dtype": "float32",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/gallery/pid.npy": {
+  "shape": [
+   15913
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr/gallery/vis.npy": {
+  "shape": [
+   15913,
+   6
+  ],
+  "dtype": "bool",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/query/cam.npy": {
+  "shape": [
+   3368
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/query/feat.npy": {
+  "shape": [
+   3368,
+   6,
+   512
+  ],
+  "dtype": "float32",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/query/pid.npy": {
+  "shape": [
+   3368
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/query/vis.npy": {
+  "shape": [
+   3368,
+   6
+  ],
+  "dtype": "bool",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/gallery/cam.npy": {
+  "shape": [
+   15913
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/gallery/feat.npy": {
+  "shape": [
+   15913,
+   6,
+   512
+  ],
+  "dtype": "float32",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/gallery/pid.npy": {
+  "shape": [
+   15913
+  ],
+  "dtype": "int64",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ },
+ "kpr_solider/gallery/vis.npy": {
+  "shape": [
+   15913,
+   6
+  ],
+  "dtype": "bool",
+  "array_equal": true,
+  "max_abs_diff": 0.0
+ }
+}

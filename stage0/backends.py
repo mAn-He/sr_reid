@@ -51,6 +51,7 @@ class BotBackend:
         from reid.model import BoT
         from reid.trainer import MEAN, STD, pk_batches, triplet_hard
         self.r = yaml.safe_load(open(ROOT / "configs" / "pilot.yaml"))["reid"]
+        self.r["num_workers"] = int(os.environ.get("SRREID_WORKERS", self.r["num_workers"]))  # Stage 0.5 측정용. 지정 없으면 레시피 값
         self.items = train_items(scale)
         self.scale, self.batch = scale, batch
         self.triplet = triplet_hard
@@ -192,7 +193,7 @@ class ClipBackend:
         self.ImageDataset = ImageDataset
         self.collate = train_collate_fn
         self.sampler = RandomIdentitySampler(items, batch, self.k)
-        self.nw = cfg.DATALOADER.NUM_WORKERS
+        self.nw = int(os.environ.get("SRREID_WORKERS", cfg.DATALOADER.NUM_WORKERS))  # Stage 0.5 측정용. 지정 없으면 레시피 값
         self.model = make_model(cfg, num_class=self.num_classes, camera_num=6, view_num=1).cuda()
         self.scaler = torch.cuda.amp.GradScaler()
         self.xent = SupConLoss("cuda")
@@ -332,7 +333,7 @@ class KprBackend:
         save = ROOT / "runs" / "stage0" / "kpr_tmp"
         args = SimpleNamespace(root=str(ROOT / "data" / "kpr"), save_dir=str(save), inference_enabled=False, sources=[name],
                                targets=[name], transforms=None, job_id=f"{tag}_{os.getpid()}",
-                               opts=["data.height", h, "data.width", w, "train.batch_size", batch, "test.visrank", False,
+                               opts=["data.workers", int(os.environ.get("SRREID_WORKERS", 4)), "data.height", h, "data.width", w, "train.batch_size", batch, "test.visrank", False,
                                      "test.batch_size", eval_batch, "model.backbone_pretrained_path", str(W) + "/",
                                      "train.seed", seed])
         self.cfg = cfg = build_config(args=args, config_path=str(yaml_path))

@@ -10,6 +10,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOCKED_NAMES = ("query", "bounding_box_test", "gt_query", "gt_bbox")
 LOCKED_ROOT = os.path.join(ROOT, "data", "locked")
 MARKET_ROOT = os.path.join(ROOT, "data", "market")
+DATA_ROOT = os.path.join(ROOT, "data")
+CACHE_ROOT = os.environ.get("SRREID_CACHE", "/root/srreid_cache")  # 실행 중에만 있는 로컬 NVMe memmap 캐시
 FLAG = os.path.join(ROOT, "logs", "GUARD_VIOLATION")
 EVENTS = {"open", "os.listdir", "os.scandir", "glob.glob", "os.rename", "os.remove", "os.chmod"}
 
@@ -27,7 +29,15 @@ def is_locked(path):
         return False
     if p == LOCKED_ROOT or p.startswith(LOCKED_ROOT + os.sep):
         return True
-    return any(p == t or p.startswith(t + os.sep) for t in (os.path.join(MARKET_ROOT, n) for n in LOCKED_NAMES))
+    if any(p == t or p.startswith(t + os.sep) for t in (os.path.join(MARKET_ROOT, n) for n in LOCKED_NAMES)):
+        return True
+    # data/<condition>/x<k>/<split>/ 형식과 캐시 파일도 같은 규칙으로 막는다. 캐시 파일명은 <condition>__x<k>__<split>.*
+    if p.startswith(DATA_ROOT + os.sep) and any(n in p[len(DATA_ROOT):].split(os.sep) for n in LOCKED_NAMES):
+        return True
+    if p.startswith(CACHE_ROOT + os.sep):
+        name = os.path.basename(p)
+        return any(f"__{n}." in name or f"__{n}__" in name for n in LOCKED_NAMES)
+    return False
 
 
 def check(path):

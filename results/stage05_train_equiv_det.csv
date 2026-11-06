@@ -1,0 +1,17 @@
+model,input,batch,workers,comparison,flags,iters,max_abs_loss_diff,mean_abs_loss_diff,noise_max,noise_mean,first_diff_iter,passed,note
+bot,384x192,64,4,baseline vs memmap (warn),memmap,200,0.23253440856933594,0.05273824691772461,0.0,0.0,0,False,기준선 반복 first_diff=-1
+bot,384x192,64,4,baseline vs all (warn),memmap+no_timers+prefetch4,200,0.23253440856933594,0.05273824691772461,0.0,0.0,0,False,기준선 반복 first_diff=-1
+clipreid,384x192,64,4,baseline vs memmap (warn),memmap,200,0.0,0.0,0.0,0.0,-1,True,기준선 반복 first_diff=-1
+clipreid,384x192,64,4,baseline vs all (warn),memmap+no_timers+prefetch4,200,0.0,0.0,0.0,0.0,-1,True,기준선 반복 first_diff=-1
+kpr,384x192,48,4,baseline vs memmap (cpu_up),memmap+mask_f32,200,1.0943145751953125,0.23637523651123046,0.0,0.0,30,False,기준선 반복 first_diff=-1
+kpr,384x192,48,4,baseline vs all_u8 (cpu_up),memmap+no_timers+prefetch4,200,0.9013252258300781,0.2271990394592285,0.0,0.0,0,False,기준선 반복 first_diff=-1
+kpr_solider,384x192,48,4,baseline vs memmap (cpu_up),memmap+mask_f32,200,1.835927963256836,0.397337007522583,0.0,0.0,2,False,기준선 반복 first_diff=-1
+kpr_solider,384x192,48,4,baseline vs all_u8 (cpu_up),memmap+no_timers+prefetch4,200,1.3421192169189453,0.350382833480835,0.0,0.0,0,False,기준선 반복 first_diff=-1
+bot,384x192,64,4,baseline vs wnorm (warn),memmap+worker_norm,200,0.0,0.0,0.0,0.0,-1,True,기준선 반복 first_diff=-1
+bot,384x192,64,4,baseline vs final (warn),memmap+worker_norm+no_timers+prefetch4,200,0.0,0.0,0.0,0.0,-1,True,기준선 반복 first_diff=-1
+clipreid,384x192,64,4,baseline vs wnorm (warn),memmap+worker_norm,200,0.0,0.0,0.0,0.0,-1,True,기준선 반복 first_diff=-1
+clipreid,384x192,64,4,baseline vs final (warn),memmap+worker_norm+no_timers+prefetch4+pin,200,0.0,0.0,0.0,0.0,-1,True,기준선 반복 first_diff=-1
+kpr,384x192,48,4,copy_read vs memmap+f32 (cpu_up),copy_read,200,0.0,0.0,0.0,0.0,-1,True,copy_read 반복 first_diff=-1
+kpr,384x192,48,4,baseline vs copy_read (cpu_up),copy_read,200,1.0943145751953125,0.23637523651123046,0.0,0.0,30,False,copy_read 반복 first_diff=-1
+kpr_solider,384x192,48,4,copy_read vs memmap+f32 (cpu_up),copy_read,200,0.0,0.0,0.0,0.0,-1,True,copy_read 반복 first_diff=-1
+kpr_solider,384x192,48,4,baseline vs copy_read (cpu_up),copy_read,200,1.835927963256836,0.397337007522583,0.0,0.0,2,False,copy_read 반복 first_diff=-1
