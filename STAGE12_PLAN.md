@@ -24,7 +24,11 @@
   - e. 무참조 화질: MUSIQ, CLIP-IQA, MANIQA, NIQE. 보고만 한다.
 - SR 실행량: 12종 × 3배율 × (표본 2,250장 + 복원용 축소 입력 2,250장).
   - ×4 전용 방법(osdhuman, pisa_sr ×5)은 ×4 한 번 실행의 출력을 줄여 ×2·×3을 만든다. 실제로는 원본 입력 1회 + 축소 입력 배율별 3회다.
-  - 예상 GPU 시간은 배치 측정(`results/stage1_sr_batch_bench.csv`) 뒤 확정한다.
+  - 예상 GPU 시간 [새, 4090]. SR은 배치 측정(`results/stage1_sr_batch_bench.csv`)과 스모크 중앙값에서 계산했다. 축소 입력도 원본과 같은 시간이 든다고 보고 계산한 상한이다.
+    - SR, 전부 배치 1: ×4 약 5.0h, ×3 약 2.7h, ×2 약 2.2h, 합계 약 10h. PiSA λ 5단계가 7.5h를 차지한다.
+    - SR, 배치 사용(realesrgan b4, swinir b32, hat b8~16, 확산 b8~16, mambairv2는 b1): ×4 약 3.3h, ×3 약 1.8h, ×2 약 1.5h, 합계 약 6.6h.
+    - 지표: d(복원)는 이미지당 0.106초 기준 약 2.4h다. e(무참조)는 측정하지 않았고 0.1~0.2초로 가정해 약 2.3~4.5h다. a·b·c는 수십 분이다. 합계 약 5~7h다.
+    - Stage 1 합계는 약 12~17h다(×2 공식 가중치를 쓰면 swinir·hat·mambairv2 ×2분 약 0.3h가 늘어난다).
 - 산출물: `results/stage1_metrics.csv`, `results/stage1_ranking.csv`, `STAGE1_REPORT.md`. 사용자 승인 뒤 생성 단계로 넘어간다.
 
 ## 3. Stage 2 시간 추정 (학습 1회, 레시피 epoch)

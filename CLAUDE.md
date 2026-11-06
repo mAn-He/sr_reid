@@ -81,6 +81,9 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - Stage 1 준비
   - 완료: 표본 `configs/stage1_sample.csv`(`stage1/make_sample.py`, seed 42, 2,250장, 751명).
   - 완료: 선정 규칙 초안 `STAGE1_SELECTION_RULE.md` v0(사용자 승인 대기, 질문 4개).
-  - 진행/완료 확인: 방법별 SR 배치 추론 측정 `stage05/sr_batch_bench.py` → `results/stage1_sr_batch_bench.csv`.
+  - 완료: 방법별 SR 배치 추론 측정 `stage05/sr_batch_bench.py` → `results/stage1_sr_batch_bench.csv`(로그 `logs/stage1/sr_batch_bench/`).
+    - 배치 1과 비트 단위로 같은 것은 realesrgan b≤4뿐이다. swinir·hat는 ±1이고 mambairv2(gumbel RNG)는 배치하면 크게 바뀐다.
+    - osdhuman·pisa_sr은 공식 경로 자체가 실행마다 다르다(mem-efficient SDPA).
+    - mambairv2·osdhuman·pisa_sr 출력은 실행 안 처리 순서(RNG 소비)에 따라 달라지므로 재시작하면 결과가 달라진다.
 - **다음:** 사용자가 선정 규칙 v1, 속성 모델, ×2 가중치 정책, 배치 사용을 승인하면 표본 SR(`runs/stage1_sample/`)과 지표 계산을 시작한다.
 - 문서: `STAGE12_PLAN.md`(새 구조), `STAGE05_PART_F_PLAN.md`(새 범위).
