@@ -1,0 +1,14 @@
+method,k,n,n_bit_identical
+hat,3,20,20
+hat,4,20,20
+mambairv2,3,20,20
+mambairv2,4,20,20
+swinir,3,20,20
+swinir,4,20,20
+realesrgan,4,20,20
+osdhuman,4,20,20
+pisa_sr_sem0.0,4,20,20
+pisa_sr_sem0.5,4,20,20
+pisa_sr_sem1.0,4,20,20
+pisa_sr_sem1.5,4,20,20
+pisa_sr_sem2.0,4,20,20
