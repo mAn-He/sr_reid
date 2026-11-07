@@ -37,10 +37,16 @@ class Embedder:
         return torch.cat(out).numpy()
 
 
-def dinov3(size="large"):
+def dinov3(size="large", rope_bf16=True):
+    """rope_bf16: 원본 DINOv3는 RoPE 주기를 bfloat16 버퍼로 저장한다. timm은 float32로 새로 계산하므로, timm 모델 카드의 안내대로
+    주기를 bfloat16으로 잘랐다가 float32로 되돌려 원본 출력과 맞춘다(2026-11-07 사용자 결정)."""
     import timm
     name = f"vit_{size}_patch16_dinov3.lvd1689m"
-    m = timm.create_model(name, pretrained=True, pretrained_cfg_overlay=dict(file=str(W / f"dinov3/{name}/model.safetensors")), img_size=EMB_HW).eval().to(DEV)
+    m = timm.create_model(name, pretrained=True, pretrained_cfg_overlay=dict(file=str(W / f"dinov3/{name}/model.safetensors")), img_size=EMB_HW).eval()
+    if rope_bf16:
+        assert getattr(m.rope, "pos_embed_cached", None) is None  # 캐시가 있으면 주기를 바꿔도 반영되지 않는다
+        m.rope.periods.copy_(m.rope.periods.to(torch.bfloat16).to(torch.float32))
+    m = m.to(DEV)
     cfg = m.pretrained_cfg
     return Embedder(f"dinov3_{size}", m, lambda x: m.forward_features(x)[:, 0], cfg["mean"], cfg["std"])
 
@@ -153,9 +159,20 @@ def frechet(a, b):
     return float(((mu1 - mu2) ** 2).sum() + np.trace(s1) + np.trace(s2) - 2 * tr_cs)
 
 
-def kid(a, b, n_subsets=100, subset=1000, seed=42):
+def kid(a, b, n_subsets=100, subset=1000, seed=42, device=None):
     """KID: 3차 다항 커널 (x·y/d + 1)^3 의 비편향 MMD², 부분집합 평균(Bińkowski et al. 2018)."""
     rng = np.random.default_rng(seed)
+    if device is not None:  # 같은 부분집합 선택(numpy rng), float64 연산만 GPU에서
+        A, Bt = torch.as_tensor(np.asarray(a, np.float64), device=device), torch.as_tensor(np.asarray(b, np.float64), device=device)
+        d = A.shape[1]
+        m = min(subset, len(a), len(b))
+        vals = []
+        for _ in range(n_subsets):
+            x = A[torch.as_tensor(rng.choice(len(a), m, replace=False), device=device)]
+            y = Bt[torch.as_tensor(rng.choice(len(b), m, replace=False), device=device)]
+            kxx, kyy, kxy = (x @ x.T / d + 1) ** 3, (y @ y.T / d + 1) ** 3, (x @ y.T / d + 1) ** 3
+            vals.append(float((kxx.sum() - kxx.trace()) / (m * (m - 1)) + (kyy.sum() - kyy.trace()) / (m * (m - 1)) - 2 * kxy.mean()))
+        return float(np.mean(vals)), float(np.std(vals))
     a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
     d = a.shape[1]
     m = min(subset, len(a), len(b))

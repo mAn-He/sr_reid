@@ -30,8 +30,16 @@
 - **WebP**: 무손실 method 2 (`stage05/sr_generate.py`의 `WEBP`). 저장 직후 픽셀 전수 비교.
 - **SR 생성 범위 (2026-11-06 변경)**
   - 이전 F1(train ×4 전체 12종)은 취소했다. 시작한 적 없음, `data/`에 생성물 0장.
-  - Stage 1: 표본 2,250장 × 12종 × {×3, ×4}만 `runs/stage1_sample/<method>/x<k>/<원본파일명>.webp`에 만든다(`stage1/sr_gen.py`). ×3: swinir·hat·mambairv2는 공식 ×3 가중치, realesrgan은 ×4 후 축소, osdhuman·pisa_sr은 0단계 비교 후 사용자가 정한다.
+  - Stage 1: 표본 2,250장 × 12종 × {×3, ×4}만 `runs/stage1_sample/<method>/x<k>/<원본파일명>.webp`에 만든다(`stage1/sr_gen.py`, 실행 `stage1/run_gen.sh`). ×3: swinir·hat·mambairv2는 공식 ×3 가중치, **realesrgan·osdhuman·pisa_sr은 ×4 출력을 PIL BICUBIC으로 384×192 축소(세 방법 같은 커널, 2026-11-07 결정)**.
   - Stage 1 배치 정책 (가): realesrgan b4(배치 1과 비트 일치), 나머지 b1. 이미지마다 파일명 기반 고정 seed(sha256("42:<파일명>")).
+  - Stage 1 결정적 설정(2026-11-07 결정): osdhuman·pisa_sr·mambairv2·hat은 `--det --warmup`(cudnn.benchmark=False, cudnn.deterministic=True, SDPA math만, 예열 1회) + 파일명 seed. swinir·realesrgan은 공식 설정. 공식 설정과의 차이는 `results/stage1/det_vs_official_*.csv`.
+- **Stage 1 평가 설정 (2026-11-07 결정)**
+  - DINOv3: timm 변환본 ViT-L(`vit_large_patch16_dinov3.lvd1689m`), 256×128 PIL BICUBIC, CLS, RoPE 주기 bf16 보정. DINOv3 License 사용 표기 의무를 보고서에 기록.
+  - PersonViT: ViT-B LUPerson 자기지도(checkpoint0260), mean/std 0.5/0.5. 한계: 사전학습 정규화 확인 불가, 체크포인트를 ReID 정확도로 고름.
+  - A-FINE: pyiqa 사본. 보고 지표 afine_all_scale(0~100)·충실도·자연스러움, 원값 afine_all은 중앙값만. 모두 낮을수록 좋음. bicubic 행은 "기준 이미지와 동일, 비교 불가".
+  - 분포 거리(Fréchet, KID): L2 정규화 임베딩, 고윳값 분해. 기준선: 블러 σ=0.5, JPEG 90, 같은 사람 다른 카메라.
+  - env: 새 env를 만들지 않는다. scikit-learn 1.7.2를 srreid-quality에 설치(충돌 없음). 다른 패키지도 기존 env에 설치하고 충돌 시 멈추고 보고. srreid-mambair의 python 링크(→ srreid-realesrgan)는 그대로 둔다.
+  - HTML: 그림은 축소 JPEG(품질 85) 내장, 원본 PNG는 `results/stage1/figures/`(커밋 안 함). 최악 10장은 별도 HTML(배율별).
   - Stage 1 승인 뒤: 선정 2개 방법의 train·query·gallery ×3·×4. bicubic은 기존 데이터를 재사용한다.
   - 스모크 출력 `runs/stage05/sr_smoke/`(train 100장 × 12종)는 지우지 않는다.
   - 일괄 생성은 완성 WebP를 즉시 /workspace(`data/<method>/x<k>/<split>/`)에 쓰고, 재시작하면 남은 파일부터 이어서 생성한다(`sr_generate.py`가 완성 파일을 건너뜀).
@@ -51,7 +59,7 @@
   - 가중치·env·HF/torch 캐시는 /workspace에 둔다: `TORCH_HOME=/workspace/weights/torch`, `HF_HOME=/workspace/.cache/huggingface`, DreamSim은 `weights/stage05/dreamsim`(실제 디렉터리). /root를 가리키는 가중치 링크는 만들지 않는다.
 
 ## 3. 금지 사항
-- **SR 일괄 생성(선정 방법의 train·test 전체)은 사용자가 Stage 1 결과를 승인하기 전까지 시작하지 않는다.** Stage 1 표본 SR(1단계)도 0단계 보고를 사용자가 승인한 뒤에 돌린다.
+- **SR 일괄 생성(선정 방법의 train·test 전체)은 사용자가 Stage 1 결과를 승인하고 2개 방법을 선정하기 전까지 시작하지 않는다.**
 - test 이미지(query, bounding_box_test, gt_*)는 SR 생성만 허용하고 평가·열람하지 않는다. 예외는 공개 가중치 기준선·등가성 측정(이미 끝남)뿐이다. `data/locked`의 권한 변경·열람 금지. 가드는 `common/guard.py`(ALLOW_TEST=1일 때만 허용)다.
 - 학습 레시피 변경 금지(입력 크기 제외): 배치, PK 샘플링, 학습률, 스케줄, epoch, 옵티마이저, 정밀도, 증강.
 - 외부 모델·SR 저장소(`third_party/`) 소스 수정 금지. config, 래퍼, 서브클래스, 어댑터로만 바꾼다.
@@ -81,11 +89,9 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - 모델 파이프라인 근거: `docs/PIPELINE_<model>.md`, 입력 크기 `docs/INPUT_SIZE_POLICY.md`
 - 알려진 기록: `runs/stage05/done/d9_data_kpr_memmap.json`은 2026-11-01 01:47 쿼터 사건으로 0바이트였다. KPR memmap 등가성은 d10 copy_read 비교로 대신 확정했다.
 
-## 6. 현재 진행 단계 (갱신: 2026-11-06, Stage 1 2차 교체 반영)
+## 6. 현재 진행 단계 (갱신: 2026-11-07)
 - Stage 0, 파일럿, Stage 0.5 측정: 완료. 보고서는 `STAGE05_REPORT.md`, 3e 포함.
 - SR 배치 추론 측정 완료: `results/stage1_sr_batch_bench.csv`. 배치 1과 비트 일치는 realesrgan b≤4뿐. mambairv2·osdhuman·pisa_sr은 실행 안 처리 순서(RNG)에 따라 출력이 달라진다.
-- **Stage 1 0단계 진행 중**
-  - SR 24조합 로드 확인(`stage1/run_step0.sh load`), 재현성(`repro`), osdhuman·pisa_sr ×3 방식 비교(`x3cmp`, 출력 `runs/stage1_step0/`).
-  - 평가 모델 확보: DINOv3(timm 사본 S/B/L), PersonViT(LUPerson 자기지도 S/B), PLIP(RN50), A-FINE(pyiqa 사본) → `weights/stage1/`(`SHA256.csv`), 적재기 `stage1/eval_models.py`, 점검 `results/stage1/eval_model_check.json`.
-  - 0단계 보고 후 사용자 승인 전에는 1단계 생성을 시작하지 않는다.
+- Stage 1 0단계 완료(`e553f53`), 사용자 결정 2026-11-07 반영.
+- **Stage 1 1~3단계 진행 중 (2026-11-07)**: 1단계 생성 `stage1/run_gen.sh`(main, official20, det20) → 2·3단계 `stage1/run_metrics.sh`(manifest, embed, fft, detoff, aggregate, plots, rows, report). 중간 산출물 `runs/stage1_metrics/`.
 - 문서: `STAGE12_PLAN.md`, `STAGE05_PART_F_PLAN.md`.
