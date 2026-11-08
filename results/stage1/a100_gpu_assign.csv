@@ -1,0 +1,13 @@
+job,gpu
+pisa_sr_sem0.0,0
+pisa_sr_sem0.5,1
+pisa_sr_sem1.5,1
+pisa_sr_sem1.0,0
+pisa_sr_sem2.0,0
+osdhuman,1
+hat,0
+mambairv2,1
+swinir,0
+base,1
+realesrgan,0
+classic,0
