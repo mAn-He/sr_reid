@@ -101,5 +101,5 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - SR 배치 추론 측정 완료: `results/stage1_sr_batch_bench.csv`. 배치 1과 비트 일치는 realesrgan b≤4뿐. mambairv2·osdhuman·pisa_sr은 실행 안 처리 순서(RNG)에 따라 출력이 달라진다.
 - Stage 1 0단계 완료(`e553f53`), 사용자 결정 2026-11-07 반영.
 - Stage 1 1~3단계 4090 실행(2026-11-07): 1·2단계 완료(`db4e188`, `3ce6209`), 3단계 그림 도중 pod 중단. 결과는 `runs/stage1_*_4090/`, `results/stage1_4090/`에 보관(A100 결과와 섞지 않음).
-- **Stage 1 A100 재실행 진행 중 (2026-11-08)**: 진단·env 확인 완료, A100 재현성 20장 10설정 전부 비트 일치(정방향 GPU0 대 역순 GPU1, `results/stage1/step0_repro.csv`), 동시 실행 측정 완료(GPU당 4). `P=4 bash stage1/run_a100.sh main check20 post` 실행 중(tmux s1a100, 로그 `logs/bg/s1a100.log`, `logs/stage1/a100/`).
+- **Stage 1 A100 재실행 완료 (2026-11-08)**: 1단계 `95093ef`(48집합, 실패 0), 2단계 `14e1d5b`, 3단계 보고서 `STAGE1_REPORT.html`·`.md`(최악 10장 `STAGE1_REPORT_worst_x{3,4}.html`은 100MB 넘어 gitignore, 그림 PNG `results/stage1/figures/`도 커밋 안 함). 동시 실행 출력 = 단독 재생성 13설정 20/20 비트 일치. **사용자의 결과 검토와 SR 2개 선정 대기.**
 - 문서: `STAGE12_PLAN.md`, `STAGE05_PART_F_PLAN.md`.

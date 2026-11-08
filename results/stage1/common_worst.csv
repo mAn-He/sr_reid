@@ -1,0 +1,269 @@
+k,method,name,count,metrics
+3,bicubic,0518_c3s1_142083_02,3,lf_coh slope_dev_hi de2000
+3,bicubic,0518_c5s1_142845_01,3,lf_coh slope_dev_hi de2000
+3,bicubic,0546_c1s3_010146_04,3,lf_coh slope_dev_hi de2000
+3,bicubic,0636_c3s2_026537_03,3,lf_coh slope_dev_hi de2000
+3,bicubic,0636_c5s2_027280_04,3,lf_coh slope_dev_hi de2000
+3,bicubic,0637_c3s2_044612_02,3,lf_coh slope_dev_hi de2000
+3,bicubic,0975_c1s6_020946_02,3,lf_coh slope_dev_hi de2000
+3,bicubic,1220_c3s3_013678_06,3,lf_coh slope_dev_hi de2000
+3,bicubic,0515_c1s2_069346_02,2,lf_coh slope_dev_hi
+3,bicubic,0820_c6s2_096568_05,2,dinov3_large_cos personvit_base_cos
+3,lanczos,0975_c1s6_020946_02,4,fidelity lf_coh slope_dev_hi de2000
+3,lanczos,0518_c5s1_142845_01,3,lf_coh slope_dev_hi de2000
+3,lanczos,0546_c1s3_010146_04,3,fidelity slope_dev_hi de2000
+3,lanczos,0636_c5s2_027280_04,3,lf_coh slope_dev_hi de2000
+3,lanczos,0090_c1s1_015401_02,2,afine_all_scale natural_dis
+3,lanczos,0127_c6s2_079568_04,2,afine_all_scale natural_dis
+3,lanczos,0251_c6s1_052601_02,2,afine_all_scale natural_dis
+3,lanczos,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+3,lanczos,0430_c1s2_034091_02,2,afine_all_scale natural_dis
+3,lanczos,0518_c3s1_142083_02,2,slope_dev_hi de2000
+3,lanczos,0570_c5s2_025255_04,2,afine_all_scale natural_dis
+3,lanczos,0586_c1s3_029601_03,2,afine_all_scale natural_dis
+3,lanczos,0636_c3s2_026537_03,2,slope_dev_hi de2000
+3,lanczos,0637_c3s2_044612_02,2,fidelity de2000
+3,lanczos,1106_c6s3_012467_04,2,afine_all_scale natural_dis
+3,lanczos,1220_c3s3_013678_06,2,slope_dev_hi de2000
+3,realesrgan,0132_c5s1_031401_02,3,personvit_base_cos lf_coh de2000
+3,realesrgan,0430_c1s2_034091_02,2,personvit_base_cos lf_coh
+3,realesrgan,0546_c3s1_157358_06,2,lf_coh de2000
+3,realesrgan,0586_c1s3_029601_03,2,lf_coh de2000
+3,realesrgan,1162_c6s3_041217_05,2,afine_all_scale natural_dis
+3,osdhuman,0167_c1s1_030026_02,3,dinov3_large_cos afine_all_scale natural_dis
+3,osdhuman,0327_c5s3_066137_03,3,afine_all_scale natural_dis slope_dev_hi
+3,osdhuman,0957_c5s2_143024_03,3,dinov3_large_cos afine_all_scale natural_dis
+3,osdhuman,0043_c6s1_004451_01,2,afine_all_scale natural_dis
+3,osdhuman,0084_c1s1_013226_04,2,afine_all_scale natural_dis
+3,osdhuman,0084_c5s1_013276_04,2,afine_all_scale natural_dis
+3,osdhuman,0392_c1s2_018391_02,2,afine_all_scale natural_dis
+3,osdhuman,0430_c1s2_034091_02,2,personvit_base_cos slope_dev_hi
+3,osdhuman,0787_c5s2_083227_02,2,dinov3_large_cos de2000
+3,osdhuman,0940_c6s2_112243_06,2,lf_coh de2000
+3,osdhuman,0999_c5s2_129174_01,2,afine_all_scale natural_dis
+3,swinir,0975_c1s6_020946_02,4,personvit_base_cos fidelity lf_coh de2000
+3,swinir,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+3,swinir,0413_c1s2_060121_01,2,dinov3_large_cos fidelity
+3,swinir,0430_c1s2_034091_02,2,afine_all_scale natural_dis
+3,swinir,0570_c5s2_025255_04,2,afine_all_scale natural_dis
+3,swinir,0636_c3s2_026537_03,2,lf_coh de2000
+3,swinir,0636_c4s3_041154_05,2,fidelity de2000
+3,swinir,0636_c5s2_027280_04,2,lf_coh de2000
+3,swinir,0700_c3s2_053862_02,2,lf_coh de2000
+3,swinir,0902_c1s4_050381_02,2,personvit_base_cos fidelity
+3,swinir,1176_c1s5_032861_02,2,afine_all_scale natural_dis
+3,swinir,1220_c3s3_013678_06,2,lf_coh de2000
+3,hat,0975_c1s6_020946_02,4,personvit_base_cos fidelity lf_coh de2000
+3,hat,0221_c1s1_046201_01,2,dinov3_large_cos fidelity
+3,hat,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+3,hat,0413_c1s2_060121_01,2,dinov3_large_cos fidelity
+3,hat,0430_c1s2_034091_02,2,afine_all_scale natural_dis
+3,hat,0446_c4s2_038648_01,2,fidelity de2000
+3,hat,0499_c1s4_007806_01,2,dinov3_large_cos slope_dev_hi
+3,hat,0570_c5s2_025255_04,2,afine_all_scale natural_dis
+3,hat,0636_c5s2_027280_04,2,lf_coh de2000
+3,hat,0902_c1s4_050381_02,2,personvit_base_cos fidelity
+3,hat,1176_c1s5_032861_02,2,afine_all_scale natural_dis
+3,mambairv2,0975_c1s6_020946_02,4,personvit_base_cos fidelity lf_coh slope_dev_hi
+3,mambairv2,0780_c4s4_048810_01,3,dinov3_large_cos fidelity de2000
+3,mambairv2,0127_c6s2_079568_04,2,afine_all_scale natural_dis
+3,mambairv2,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+3,mambairv2,0430_c1s2_034091_02,2,afine_all_scale natural_dis
+3,mambairv2,0445_c3s1_111033_03,2,lf_coh de2000
+3,mambairv2,0570_c5s2_025255_04,2,afine_all_scale natural_dis
+3,mambairv2,0636_c3s2_026537_03,2,lf_coh de2000
+3,mambairv2,0636_c5s2_027280_04,2,lf_coh de2000
+3,mambairv2,1019_c3s2_130769_08,2,lf_coh slope_dev_hi
+3,mambairv2,1176_c1s5_032861_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem0.0,0546_c2s1_157316_02,2,lf_coh de2000
+3,pisa_sr_sem0.0,0704_c6s2_049568_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem0.0,0992_c5s2_127824_02,2,lf_coh de2000
+3,pisa_sr_sem0.0,1106_c6s3_012467_04,2,afine_all_scale natural_dis
+3,pisa_sr_sem0.0,1442_c6s3_080792_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem0.5,0201_c6s1_040226_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem0.5,0546_c2s1_157316_02,2,lf_coh de2000
+3,pisa_sr_sem0.5,0704_c6s2_049568_01,2,afine_all_scale lf_coh
+3,pisa_sr_sem1.0,0037_c5s1_005176_04,2,personvit_base_cos grid_peak_db
+3,pisa_sr_sem1.0,0201_c6s1_040226_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.0,0358_c3s1_082117_05,2,lf_coh de2000
+3,pisa_sr_sem1.0,0380_c5s1_089798_01,2,personvit_base_cos lf_coh
+3,pisa_sr_sem1.0,0546_c2s1_157316_02,2,lf_coh de2000
+3,pisa_sr_sem1.0,0570_c5s2_025255_04,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.0,0622_c6s2_017318_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.0,0795_c6s2_083868_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.5,0127_c6s2_079568_04,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.5,0358_c3s1_082117_05,2,lf_coh de2000
+3,pisa_sr_sem1.5,0556_c1s3_011321_04,2,slope_dev_hi grid_peak_db
+3,pisa_sr_sem1.5,0788_c6s2_078393_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.5,0795_c6s2_083868_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.5,0994_c1s4_067636_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.5,1106_c6s3_012467_04,2,afine_all_scale natural_dis
+3,pisa_sr_sem1.5,1404_c6s3_073042_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,0451_c4s2_045273_06,3,personvit_base_cos lf_coh de2000
+3,pisa_sr_sem2.0,1443_c5s3_057415_02,3,dinov3_large_cos personvit_base_cos lf_coh
+3,pisa_sr_sem2.0,0127_c6s2_079568_04,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,0132_c5s1_031401_02,2,personvit_base_cos lf_coh
+3,pisa_sr_sem2.0,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,0540_c4s3_007973_03,2,personvit_base_cos grid_peak_db
+3,pisa_sr_sem2.0,0788_c6s2_078393_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,0795_c6s2_083868_02,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,0994_c1s4_067636_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,1088_c2s2_151702_05,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,1106_c6s3_012467_04,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,1138_c6s3_021017_03,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,1433_c6s3_082992_01,2,afine_all_scale natural_dis
+3,pisa_sr_sem2.0,1470_c5s3_060465_02,2,personvit_base_cos lf_coh
+4,bicubic,0518_c3s1_142083_02,3,lf_coh slope_dev_hi de2000
+4,bicubic,0518_c5s1_142845_01,3,lf_coh slope_dev_hi de2000
+4,bicubic,0546_c1s3_010146_04,3,lf_coh slope_dev_hi de2000
+4,bicubic,0636_c3s2_026537_03,3,lf_coh slope_dev_hi de2000
+4,bicubic,0636_c5s2_027280_04,3,lf_coh slope_dev_hi de2000
+4,bicubic,0975_c1s6_020946_02,3,lf_coh slope_dev_hi de2000
+4,bicubic,1220_c3s3_013678_06,3,lf_coh slope_dev_hi de2000
+4,bicubic,0637_c3s2_044612_02,2,lf_coh de2000
+4,lanczos,0518_c5s1_142845_01,4,fidelity lf_coh slope_dev_hi de2000
+4,lanczos,0518_c3s1_142083_02,3,fidelity slope_dev_hi de2000
+4,lanczos,0546_c1s3_010146_04,3,fidelity slope_dev_hi de2000
+4,lanczos,0636_c5s2_027280_04,3,lf_coh slope_dev_hi de2000
+4,lanczos,0070_c1s1_010951_02,2,afine_all_scale natural_dis
+4,lanczos,0079_c1s1_011451_03,2,afine_all_scale natural_dis
+4,lanczos,0090_c1s1_015401_02,2,afine_all_scale natural_dis
+4,lanczos,0143_c4s1_022976_04,2,afine_all_scale natural_dis
+4,lanczos,0143_c4s1_023001_03,2,afine_all_scale natural_dis
+4,lanczos,0201_c3s1_039676_01,2,lf_coh grid_peak_db
+4,lanczos,0317_c1s1_072406_01,2,afine_all_scale natural_dis
+4,lanczos,0354_c5s1_106398_01,2,afine_all_scale natural_dis
+4,lanczos,0636_c3s2_026537_03,2,slope_dev_hi de2000
+4,lanczos,0637_c3s2_044612_02,2,fidelity de2000
+4,lanczos,0702_c6s2_086893_01,2,afine_all_scale natural_dis
+4,lanczos,0975_c1s6_020946_02,2,slope_dev_hi de2000
+4,lanczos,0997_c5s2_136174_04,2,afine_all_scale natural_dis
+4,lanczos,1220_c3s3_013678_06,2,slope_dev_hi de2000
+4,lanczos,1350_c6s3_064142_01,2,fidelity slope_dev_hi
+4,realesrgan,0143_c4s1_023001_03,4,dinov3_large_cos afine_all_scale natural_dis grid_peak_db
+4,realesrgan,0132_c5s1_031401_02,3,personvit_base_cos lf_coh de2000
+4,realesrgan,0084_c5s1_013276_04,2,afine_all_scale natural_dis
+4,realesrgan,0086_c5s1_013551_03,2,afine_all_scale natural_dis
+4,realesrgan,0167_c1s1_030026_02,2,afine_all_scale natural_dis
+4,realesrgan,0354_c5s1_106398_01,2,afine_all_scale natural_dis
+4,realesrgan,0392_c1s2_018391_02,2,afine_all_scale natural_dis
+4,realesrgan,0430_c1s2_034091_02,2,personvit_base_cos lf_coh
+4,realesrgan,0546_c3s1_157358_06,2,lf_coh de2000
+4,realesrgan,0586_c1s3_029601_03,2,lf_coh de2000
+4,realesrgan,0669_c5s2_044730_01,2,afine_all_scale natural_dis
+4,realesrgan,1206_c2s3_006432_05,2,fidelity grid_peak_db
+4,realesrgan,1404_c6s3_073042_01,2,afine_all_scale natural_dis
+4,realesrgan,1442_c5s3_057415_12,2,afine_all_scale natural_dis
+4,osdhuman,0167_c1s1_030026_02,3,dinov3_large_cos afine_all_scale natural_dis
+4,osdhuman,0298_c2s1_064621_03,3,dinov3_large_cos afine_all_scale natural_dis
+4,osdhuman,0954_c1s4_060036_02,3,afine_all_scale natural_dis slope_dev_hi
+4,osdhuman,0957_c5s2_143024_03,3,dinov3_large_cos afine_all_scale natural_dis
+4,osdhuman,0084_c1s1_013226_04,2,afine_all_scale natural_dis
+4,osdhuman,0084_c5s1_013276_04,2,afine_all_scale natural_dis
+4,osdhuman,0339_c5s1_078298_01,2,afine_all_scale slope_dev_hi
+4,osdhuman,0392_c1s2_018391_02,2,afine_all_scale natural_dis
+4,osdhuman,0430_c1s2_034091_02,2,personvit_base_cos slope_dev_hi
+4,osdhuman,0787_c5s2_083227_02,2,dinov3_large_cos de2000
+4,osdhuman,0940_c6s2_112243_06,2,lf_coh de2000
+4,osdhuman,0999_c5s2_129174_01,2,afine_all_scale natural_dis
+4,osdhuman,1173_c5s3_005868_03,2,afine_all_scale natural_dis
+4,swinir,0975_c1s6_020946_02,4,personvit_base_cos fidelity lf_coh de2000
+4,swinir,0636_c3s2_026537_03,3,fidelity lf_coh de2000
+4,swinir,0636_c5s2_027280_04,3,fidelity lf_coh de2000
+4,swinir,0070_c1s1_010951_02,2,afine_all_scale natural_dis
+4,swinir,0079_c1s1_011451_03,2,afine_all_scale natural_dis
+4,swinir,0090_c1s1_015401_02,2,afine_all_scale natural_dis
+4,swinir,0143_c4s1_022976_04,2,afine_all_scale natural_dis
+4,swinir,0392_c1s2_018391_02,2,afine_all_scale natural_dis
+4,swinir,0413_c1s2_060121_01,2,dinov3_large_cos fidelity
+4,swinir,0518_c5s1_142845_01,2,slope_dev_hi grid_peak_db
+4,swinir,0636_c4s3_041154_05,2,fidelity de2000
+4,swinir,0700_c3s2_053862_02,2,lf_coh de2000
+4,swinir,0702_c6s2_086893_01,2,afine_all_scale natural_dis
+4,swinir,0902_c1s4_050381_02,2,personvit_base_cos fidelity
+4,swinir,1220_c3s3_013678_06,2,lf_coh de2000
+4,hat,0975_c1s6_020946_02,4,personvit_base_cos fidelity lf_coh de2000
+4,hat,0636_c5s2_027280_04,3,fidelity lf_coh de2000
+4,hat,0780_c4s4_048810_01,3,dinov3_large_cos fidelity de2000
+4,hat,0070_c1s1_010951_02,2,afine_all_scale natural_dis
+4,hat,0090_c1s1_015401_02,2,afine_all_scale natural_dis
+4,hat,0143_c4s1_022976_04,2,afine_all_scale natural_dis
+4,hat,0143_c4s1_023001_03,2,afine_all_scale natural_dis
+4,hat,0392_c1s2_018391_02,2,afine_all_scale natural_dis
+4,hat,0413_c1s2_060121_01,2,dinov3_large_cos fidelity
+4,hat,0472_c5s1_122970_03,2,personvit_base_cos grid_peak_db
+4,hat,0554_c3s2_006437_01,2,lf_coh grid_peak_db
+4,hat,0636_c3s2_026537_03,2,fidelity de2000
+4,hat,0636_c4s3_041154_05,2,fidelity de2000
+4,hat,0702_c6s2_086893_01,2,afine_all_scale natural_dis
+4,hat,0902_c1s4_050381_02,2,personvit_base_cos fidelity
+4,hat,0997_c5s2_136174_04,2,afine_all_scale natural_dis
+4,hat,1019_c3s2_130769_08,2,dinov3_large_cos personvit_base_cos
+4,mambairv2,0636_c3s2_026537_03,3,fidelity lf_coh de2000
+4,mambairv2,0636_c5s2_027280_04,3,fidelity lf_coh de2000
+4,mambairv2,0975_c1s6_020946_02,3,fidelity slope_dev_hi de2000
+4,mambairv2,0070_c1s1_010951_02,2,afine_all_scale natural_dis
+4,mambairv2,0090_c1s1_015401_02,2,afine_all_scale natural_dis
+4,mambairv2,0143_c4s1_022976_04,2,afine_all_scale natural_dis
+4,mambairv2,0143_c4s1_023001_03,2,afine_all_scale natural_dis
+4,mambairv2,0221_c1s1_046201_01,2,fidelity de2000
+4,mambairv2,0354_c5s1_106398_01,2,afine_all_scale natural_dis
+4,mambairv2,0407_c1s2_024391_01,2,lf_coh slope_dev_hi
+4,mambairv2,0518_c5s1_142845_01,2,lf_coh de2000
+4,mambairv2,0702_c6s2_086893_01,2,afine_all_scale natural_dis
+4,mambairv2,0901_c1s4_050406_03,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,0084_c5s1_013276_04,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,0123_c1s1_021451_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,0185_c5s1_034601_04,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,0397_c1s2_021866_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,0421_c5s1_103873_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,0546_c2s1_157316_02,2,lf_coh de2000
+4,pisa_sr_sem0.0,0992_c5s2_127824_02,2,lf_coh de2000
+4,pisa_sr_sem0.0,1176_c1s5_032861_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.0,1242_c6s3_042967_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,0430_c1s2_034091_02,3,afine_all_scale natural_dis grid_peak_db
+4,pisa_sr_sem0.5,0090_c1s1_015401_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,0185_c5s1_034601_04,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,0392_c1s2_018391_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,0397_c1s2_021866_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,0421_c5s1_103873_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,0546_c2s1_157316_02,2,lf_coh de2000
+4,pisa_sr_sem0.5,0755_c1s4_031856_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem0.5,1176_c1s5_032861_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0037_c5s1_005176_04,2,personvit_base_cos grid_peak_db
+4,pisa_sr_sem1.0,0099_c3s1_015551_03,2,personvit_base_cos grid_peak_db
+4,pisa_sr_sem1.0,0185_c5s1_034601_04,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0358_c3s1_082117_05,2,lf_coh de2000
+4,pisa_sr_sem1.0,0380_c5s1_089798_01,2,personvit_base_cos lf_coh
+4,pisa_sr_sem1.0,0421_c5s1_103873_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0430_c1s2_034091_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0546_c2s1_157316_02,2,lf_coh de2000
+4,pisa_sr_sem1.0,0755_c1s4_031856_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0954_c1s4_060036_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,0994_c1s4_067636_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,1176_c1s5_032861_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.0,1470_c5s3_060465_02,2,slope_dev_hi grid_peak_db
+4,pisa_sr_sem1.5,0023_c1s1_004126_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,0099_c3s1_015551_03,2,personvit_base_cos grid_peak_db
+4,pisa_sr_sem1.5,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,0317_c4s1_072007_01,2,grid_peak_db de2000
+4,pisa_sr_sem1.5,0430_c1s2_034091_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,0788_c6s2_078393_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,0795_c6s2_083868_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,0954_c1s4_060036_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,0994_c1s4_067636_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem1.5,1176_c1s5_032861_02,2,natural_dis grid_peak_db
+4,pisa_sr_sem2.0,0451_c4s2_045273_06,3,personvit_base_cos lf_coh de2000
+4,pisa_sr_sem2.0,1443_c5s3_057415_02,3,dinov3_large_cos personvit_base_cos lf_coh
+4,pisa_sr_sem2.0,0023_c1s1_004126_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,0132_c5s1_031401_02,2,personvit_base_cos lf_coh
+4,pisa_sr_sem2.0,0266_c6s1_057476_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,0788_c6s2_078393_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,0795_c6s2_083868_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,0840_c6s2_101018_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,0954_c1s4_060036_02,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,0994_c1s4_067636_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,1114_c6s3_014267_01,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,1138_c6s3_021017_03,2,afine_all_scale natural_dis
+4,pisa_sr_sem2.0,1470_c5s3_060465_02,2,personvit_base_cos lf_coh
