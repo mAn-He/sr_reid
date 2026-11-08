@@ -16,6 +16,7 @@
 import argparse
 import csv
 import io
+import os
 import sys
 from pathlib import Path
 
@@ -74,10 +75,12 @@ def othercam_pairs():
         pair = cand[rng.integers(len(cand))] if cand else ""
         res.append({"name": n, "pair": pair, "source": src if pair else "none"})
     RES.mkdir(parents=True, exist_ok=True)
-    with open(out, "w", newline="") as f:
+    tmp = out.with_name(out.name + f".{os.getpid()}.tmp")  # GPU 두 작업이 동시에 만들 수 있으므로 원자적 교체(내용은 결정적)
+    with open(tmp, "w", newline="") as f:
         w = csv.DictWriter(f, ["name", "pair", "source"])
         w.writeheader()
         w.writerows(res)
+    tmp.replace(out)
     return {r["name"]: r["pair"] for r in res}
 
 
@@ -95,9 +98,9 @@ def jpeg(im):
     return pil(buf)
 
 
-def sr_sets(ns):
+def sr_sets(ns, methods=None):
     out = []
-    for m in METHODS:
+    for m in (METHODS if methods is None else [x for x in methods if x in METHODS]):  # --methods none → SR 집합 없음
         for k in (3, 4):
             d = SR / m / f"x{k}"
             if all((d / f"{n}.webp").exists() for n in ns):
@@ -108,17 +111,22 @@ def sr_sets(ns):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--parts", nargs="*", default=["emb", "afine"])
+    ap.add_argument("--methods", nargs="*", default=None, help="이 방법들의 SR 집합만(A100 GPU 분담용). 기본: 전부")
+    ap.add_argument("--no-base", action="store_true", help="orig·기준선 임베딩을 만들지 않는다(다른 GPU 작업이 맡을 때)")
+    ap.add_argument("--emb-bs", type=int, default=256, help="임베딩 배치(A100 80GB, 2026-11-08 사용자 허용: VRAM이 허용하는 큰 배치)")
+    ap.add_argument("--afine-bs", type=int, default=128)
     a = ap.parse_args()
     ns = names()
     origs = [pil(INP / f"{n}.png") for n in ns]
     pairs = othercam_pairs()
-    sets = sr_sets(ns)
-    print(f"완성된 SR 집합 {len(sets)}/24", flush=True)
+    sets = sr_sets(ns, a.methods)
+    print(f"완성된 SR 집합 {len(sets)} (대상 방법 {a.methods or '전부'})", flush=True)
     if "emb" in a.parts:
         for mk, build in MODELS.items():
             od = MET / "emb" / mk
             od.mkdir(parents=True, exist_ok=True)
-            todo = [s for s in ["orig", "base_blur_s05", "base_jpeg_q90", "base_othercam"] + [s for s, _ in sets] if not (od / f"{s}.npy").exists()]
+            base = [] if a.no_base else ["orig", "base_blur_s05", "base_jpeg_q90", "base_othercam"]
+            todo = [s for s in base + [s for s, _ in sets] if not (od / f"{s}.npy").exists()]
             if not todo:
                 continue
             e = build()
@@ -134,10 +142,11 @@ def main():
                 else:
                     d = dict(sets)[s]
                     ims = [pil(d / f"{n}.webp") for n in ns]
-                v = e(ims)
+                v = e(ims, bs=a.emb_bs)
                 if s == "base_othercam":
                     v[[not pairs[n] for n in ns]] = np.nan
-                np.save(od / f"{s}.npy", v.astype(np.float32))
+                np.save(od / f"{s}.npy.tmp.npy", v.astype(np.float32))
+                (od / f"{s}.npy.tmp.npy").replace(od / f"{s}.npy")
                 print(mk, s, v.shape, flush=True)
             del e
             import torch
@@ -149,7 +158,7 @@ def main():
         if todo:
             af = em.AFINE()
             for s, d in todo:
-                r = af(origs, [pil(d / f"{n}.webp") for n in ns])
+                r = af(origs, [pil(d / f"{n}.webp") for n in ns], bs=a.afine_bs)
                 tmp = od / f"{s}.csv.tmp"
                 with open(tmp, "w", newline="") as f:
                     w = csv.writer(f)

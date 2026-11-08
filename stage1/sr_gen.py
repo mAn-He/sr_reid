@@ -28,7 +28,7 @@ SAMPLE = ROOT / "configs" / "stage1_sample.csv"
 WEBP = {"format": "WEBP", "lossless": True, "quality": 100, "method": 2}
 CLASSIC = ("bicubic", "lanczos")
 REPO = {"realesrgan": "Real-ESRGAN", "osdhuman": "OSDHuman", "pisa_sr": "PiSA-SR", "swinir": "SwinIR", "hat": "HAT", "mambairv2": "MambaIR"}
-SERVER = "새 서버(RTX 4090, EPYC 7282, cgroup v2)"
+SERVER = os.environ.get("SRREID_SERVER", "A100 서버(A100 SXM4 80GB ×2, EPYC 7713, cgroup v2)")  # 4090 실행분은 runs/stage1_sample_4090
 
 
 def image_seed(name):
@@ -74,6 +74,7 @@ def main():
     ap.add_argument("--log-name", default=None)
     ap.add_argument("--warmup", action="store_true", help="본 처리 전에 첫 이미지를 한 번 돌려 버린다(프로세스 첫 추론의 커널 선택 차이 제거). 첫 추론과 본 추론의 차이를 기록")
     ap.add_argument("--reverse", action="store_true", help="재현성 측정용: 처리 순서를 뒤집는다")
+    ap.add_argument("--start-at", type=float, default=None, help="동시 실행 측정용: 모델 적재·예열 뒤 이 epoch 시각까지 기다렸다가 본 처리를 시작")
     a = ap.parse_args()
 
     spec = importlib.util.spec_from_file_location("srreid_guard", str(ROOT / "common" / "guard.py"))
@@ -96,7 +97,8 @@ def main():
         pending = pending[::-1]
     print(f"{mname} {sub}: 남은 {len(pending)}/{len(names)}", flush=True)
     summary = {"server": SERVER, "method": mname, "k": a.k, "sub": sub, "n": len(names), "n_pending": len(pending), "seed_mode": a.seed_mode, "det": a.det,
-               "from_x4": a.from_x4, "upscale_direct": a.upscale_direct, "batch": None, "omp": os.environ.get("OMP_NUM_THREADS"), "mkl": os.environ.get("MKL_NUM_THREADS")}
+               "from_x4": a.from_x4, "upscale_direct": a.upscale_direct, "batch": None, "omp": os.environ.get("OMP_NUM_THREADS"), "mkl": os.environ.get("MKL_NUM_THREADS"),
+               "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"), "concurrency_note": os.environ.get("SRREID_CONC_NOTE")}
     jl = open(log_dir / f"{log_name}.jsonl", "a")
     t_start = time.perf_counter()
 
@@ -182,6 +184,11 @@ def main():
             warm = {"name": n0, "first_vs_second_max_abs": int(d.max()), "first_vs_second_frac_px": float((d > 0).mean()), "first_vs_second_mean_abs": float(d.mean())}
             print("warmup", warm, flush=True)
         summary["warmup"] = warm
+        summary["gpu_name"] = torch.cuda.get_device_name(0)
+        if a.start_at:
+            summary["waited_s"] = max(0.0, a.start_at - time.time())
+            time.sleep(summary["waited_s"])
+        summary["t_infer_start_epoch"] = time.time()
         times = []
         for i in range(0, len(pending), bs):
             chunk = pending[i:i + bs]
@@ -206,6 +213,7 @@ def main():
                 jl.write(json.dumps(rec) + "\n")
             jl.flush()
         ts = sorted(times)
+        summary["t_infer_end_epoch"] = time.time()
         summary.update(n_done=len(pending), wall=time.perf_counter() - t_start,
                        infer_s_per_img_mean=(sum(times) / len(times)) if times else None,
                        infer_s_per_img_median=ts[len(ts) // 2] if ts else None,

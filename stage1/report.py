@@ -24,7 +24,7 @@ FIG = RES / "figures"
 JPG_W, JPG_Q = 1600, 85
 Image.MAX_IMAGE_PIXELS = None
 LAB = {m: m.replace("pisa_sr_sem", "pisa_sr λ") for m in METHODS}
-SERVER = "새 서버(RTX 4090, EPYC 7282, cgroup v2)"
+SERVER = "A100 서버(A100 SXM4 80GB ×2, EPYC 7713, cgroup v2)"
 DIRKO = {
     "dinov3_large_cos": "높을수록 원본과 가까움", "personvit_base_cos": "높을수록 원본과 가까움",
     "afine_all_scale": "낮을수록 좋음", "afine_all": "낮을수록 좋음", "fidelity": "낮을수록 좋음", "natural_dis": "낮을수록 좋음",
@@ -170,7 +170,8 @@ def gen_table():
                 path = ("공식 ×%d 가중치" % k if m in ("swinir", "hat", "mambairv2") else "공식 ×4") + (", 결정적+예열" if d.get("det") else ", 공식 설정")
             rows.append({"방법": LAB[m], "배율": k, "생성 경로": path, "배치": d.get("batch") or "", "이번 실행 장수": d.get("n_done"),
                          "벽시계 분": f"{d['wall'] / 60:.1f}", "추론 s/장(중앙값)": fmt(d.get("infer_s_per_img_median"), "x") if d.get("infer_s_per_img_median") else "",
-                         "피크 VRAM 할당 GiB": fmt(d.get("peak_alloc_gib"), "x") if d.get("peak_alloc_gib") else ""})
+                         "피크 VRAM 할당 GiB": fmt(d.get("peak_alloc_gib"), "x") if d.get("peak_alloc_gib") else "",
+                         "GPU": d.get("cuda_visible_devices") if d.get("cuda_visible_devices") is not None else ""})
     return pd.DataFrame(rows)
 
 
@@ -186,7 +187,7 @@ def main():
     pix, met, rep = read("det_vs_official_pixels.csv"), read("det_vs_official_metrics.csv"), read("det20_repro.csv")
     s0rep = read("step0_repro.csv")
     fail = {}
-    lg = ROOT / "logs" / "bg" / "s1gen.log"
+    lg = ROOT / "logs" / "bg" / "s1a100.log"
     if lg.exists():
         bad = [l.strip() for l in lg.read_text().splitlines() if re.search(r"종료 \S+ rc=[1-9]", l)]
         fail["text"] = (f"생성 작업 비정상 종료 {len(bad)}건" + (": " + "; ".join(bad) if bad else "") +
@@ -194,14 +195,15 @@ def main():
     pi = read("per_image_metrics.csv")
     d = Doc()
     d.h(1, "Stage 1 보고서: SR 12종 × {×3, ×4} 비교 (정답 없음, 원본 128×64 기준)")
-    d.p(f"작성 2026-11-07. 표본 `configs/stage1_sample.csv`(train 751명, 2,250장, seed 42). test·data/locked는 쓰지 않았다. 시간·처리량은 모두 {SERVER} 측정값이다.")
+    d.p(f"작성 2026-11-08(A100 서버 재실행). 표본 `configs/stage1_sample.csv`(train 751명, 2,250장, seed 42). test·data/locked는 쓰지 않았다. 시간·처리량은 모두 {SERVER} 측정값이며, 본 생성 시간은 **병렬 실행 중 측정**(GPU 2장, GPU당 여러 프로세스 동시)이다.")
+    d.p("비트 단위 재현성은 같은 GPU 종류 안에서만 보장되므로 Stage 1 전체(생성·지표·그림)를 A100에서 처음부터 다시 했다. 이전 RTX 4090 실행 결과는 섞지 않고 `runs/stage1_sample_4090/`, `runs/stage1_metrics_4090/`, `runs/stage1_step0_4090/`, `results/stage1_4090/`에 보관했다. 0단계의 SR 로드 확인·×3 방식 비교·평가 모델 적재 점검(`results/stage1_4090/step0_*`, `eval_model_check.*`)은 4090 측정이며, A100에서는 재현성 확인만 다시 했다.")
     d.p("**이 보고서는 순위·추천·선정을 하지 않는다.** 방법은 항상 같은 고정 순서(bicubic, lanczos, realesrgan, osdhuman, swinir, hat, mambairv2, pisa_sr λ0.0~2.0)로 나열하며, 값의 크기순 정렬은 하지 않았다. 선정은 사용자가 한다.")
     d.raw_html('<nav><a href="#gen">1단계 생성</a><a href="#repro">재현성</a><a href="#def">지표 정의</a><a href="#models">모델·라이선스</a><a href="#res">결과표</a>'
                '<a href="#figs">그림</a><a href="#ba">비포·애프터</a><a href="#lim">한계</a></nav>')
 
     d.h(2, "1. 1단계: SR 생성", "gen")
     d.ul(["출력 `runs/stage1_sample/<method>/x<k>/<원본파일명>.webp`, WebP 무손실 method 2, 저장 직후 픽셀 전수 비교. data/에는 쓰지 않았다.",
-          "배치 정책 (가): realesrgan b4(배치 1과 비트 일치 확인됨), 나머지 b1. OMP/MKL 스레드 4. 이미지마다 파일명 기반 seed = sha256(\"42:<파일명>\") 앞 8자리 & 0x7fffffff.",
+          "배치 정책 (가): realesrgan b4(배치 1과 비트 일치 확인됨), 나머지 b1. 배치는 키우지 않고 GPU당 여러 프로세스를 동시에 띄웠다(작업 단위 = 방법 하나, pisa_sr는 λ별, 한 방법의 ×3·×4 생성과 지표는 같은 GPU). OMP/MKL 스레드 프로세스당 4. 이미지마다 파일명 기반 seed = sha256(\"42:<파일명>\") 앞 8자리 & 0x7fffffff.",
           "osdhuman, pisa_sr(λ 0.0/0.5/1.0/1.5/2.0), mambairv2, hat: 결정적 설정(cudnn.benchmark=False, cudnn.deterministic=True, SDPA math 백엔드만) + 예열 1회(첫 이미지를 한 번 돌려 버림) + 파일명 seed.",
           "swinir, realesrgan: 공식 설정(난수 미사용). swinir·hat·mambairv2 ×3은 공식 ×3 가중치.",
           "**realesrgan·osdhuman·pisa_sr ×3은 ×4 출력을 PIL BICUBIC(Image.resize, 축소 시 지지폭 확대 = 안티에일리어싱)으로 384×192로 축소했다. 세 방법 모두 같은 커널이다(`stage1/sr_gen.py --from-x4`).**",
@@ -211,7 +213,7 @@ def main():
         d.p(f"manifest: `results/stage1/stage1_sample_manifest.csv.gz`(파일별 SHA256·크기·픽셀 크기, 생성 로그 SHA256과 대조). 기대 {int(man.expected.sum()):,}장 중 {tot:,}장 존재, "
             f"누락 {int(man.missing.sum())}, 크기 불일치 {int(man.wrong_size.sum())}, 로그 SHA256 불일치 {int(man.log_sha_mismatch.sum())}, 임시 파일 {int(man.tmp_files.sum())}. "
             f"총 {man.total_bytes.sum() / 2**30:.2f} GiB.")
-    d.table(gen_table(), "방법별 생성 기록(마지막 실행의 summary.json). 생성 중 CPU 작업(bicubic·lanczos·×3 축소)과 지표 계산이 같이 돌았으므로 시간은 참고값이다. 측정: " + SERVER)
+    d.table(gen_table(), "방법별 생성 기록(마지막 실행의 summary.json, GPU = CUDA_VISIBLE_DEVICES 번호). 병렬 실행 중 측정: 다른 생성·지표 프로세스가 같이 돌았으므로 시간은 참고값이다. 측정: " + SERVER)
     if fail:
         d.p("실패·재처리 내역: " + fail.get("text", ""))
 
@@ -220,12 +222,12 @@ def main():
         rr = rep.copy()
         rr["method"] = rr.method.map(lambda m: LAB.get(m, m))
         d.table(rr.rename(columns={"method": "방법", "k": "배율", "n": "장수", "n_bit_identical": "비트 일치"}),
-                "본 생성 설정 그대로 별도 프로세스에서 표본 앞 20장을 다시 생성해 본 출력과 배열 SHA1을 비교(`runs/stage1_step0/det20/`).")
+                "본 생성(GPU당 여러 프로세스 동시 실행) 출력과, 같은 설정으로 GPU1에서 단독(GPU당 1개 프로세스) 다시 생성한 표본 앞 20장의 배열 SHA1 비교(`runs/stage1_step0/det20/`). 동시 실행과 GPU 번호가 출력을 바꾸지 않는지 확인한다.")
     if s0rep is not None:
         t = s0rep[s0rep.status == "ok"][["method", "k", "config", "n", "n_bit_identical", "infer_s_median_excl_first"]].copy()
         t["config"] = t.config.map({"off": "공식", "det": "결정적", "offw": "공식+예열", "detw": "결정적+예열", "strictw": "결정적+deterministic_algorithms+예열"})
         d.table(t.rename(columns={"method": "방법", "k": "배율", "config": "설정", "n": "장수", "n_bit_identical": "정·역순 실행 비트 일치", "infer_s_median_excl_first": "s/장"}),
-                f"0단계 측정(20장, 별도 프로세스 2회, 정방향 대 역순). s/장은 {SERVER}.")
+                f"A100 재현성 확인(20장, 별도 프로세스 2회: 정방향 = GPU0, 역순 = GPU1, 각 GPU에 한 프로세스). s/장은 {SERVER}.")
     if pix is not None:
         t = pix.copy()
         t["method"] = t.method.map(lambda m: LAB.get(m, m))
@@ -356,7 +358,9 @@ def main():
           "분포 거리(Fréchet, KID)는 집합 단위 점추정이며 신원 부트스트랩 CI가 없다. 2,250장, 768~1,024차원이므로 Fréchet의 공분산 추정에 표본 크기 영향이 있다.",
           "기준선 '다른 카메라'는 같은 표본 안의 짝이며 카메라 조합은 통제하지 않았다.",
           "c의 '모든 방법에서 나쁨/특정 방법만 나쁨' 기준(10%, 중앙값 50%)과 최악 정의는 시각화용으로 정한 것이다.",
-          "생성 시간은 다른 CPU 작업과 동시에 돈 값이라 벤치마크가 아니다."])
+          "생성 시간은 병렬 실행 중 측정값(다른 생성·지표 프로세스와 동시)이라 단독 처리량이 아니다.",
+          "A100 결과와 4090 결과는 커널 선택이 달라 픽셀이 비트 단위로 같지 않다. 두 서버 결과를 섞지 않았다.",
+          "임베딩·A-FINE은 A100에서 큰 배치(임베딩 256, A-FINE 128)로 계산했다. 배치 크기는 부동소수 연산 순서만 바꾼다(4090 실행은 64·32)."])
     d.write(ROOT / "STAGE1_REPORT.md", ROOT / "STAGE1_REPORT.html", "Stage 1 보고서")
 
     for k in (3, 4):

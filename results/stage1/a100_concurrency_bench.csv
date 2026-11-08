@@ -1,0 +1,5 @@
+procs_per_gpu,procs_total,images,seconds,img_per_s_total,per_proc_s_per_img_median,gpu0_util_mean,gpu1_util_mean,gpu0_mem_max_mib,gpu1_mem_max_mib,peak_reserved_gib_per_proc_max,host_cpu_busy_pct_mean_top,cores_busy_est,host_cpus,cgroup_cpu_limit,omp_per_proc,note
+1,2,100,17.6,5.695,0.264,60.0,64.1,9375.0,9375.0,8.62,2.7,7.0,255,54.4,4,"병렬 실행 중 측정, pisa_sr ×4 b1 결정적+예열, 50장/프로세스, WebP 저장 포함(/root 로컬)"
+2,4,200,30.0,6.661,0.515,73.9,81.7,19168.0,19168.0,8.62,2.9,7.3,255,54.4,4,"병렬 실행 중 측정, pisa_sr ×4 b1 결정적+예열, 50장/프로세스, WebP 저장 포함(/root 로컬)"
+3,6,300,44.8,6.704,0.818,86.0,100.0,28118.0,28118.0,8.62,3.5,9.0,255,54.4,4,"병렬 실행 중 측정, pisa_sr ×4 b1 결정적+예열, 50장/프로세스, WebP 저장 포함(/root 로컬)"
+4,8,400,56.5,7.085,1.026,99.4,94.1,37490.0,37490.0,8.62,4.1,10.5,255,54.4,4,"병렬 실행 중 측정, pisa_sr ×4 b1 결정적+예열, 50장/프로세스, WebP 저장 포함(/root 로컬)"

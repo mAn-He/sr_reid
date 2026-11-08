@@ -1,0 +1,16 @@
+{
+ "input": "L2-normalized CLS embeddings (same as cosine metric)",
+ "points": "original 2,250 + 12 methods x 2,250 per scale",
+ "pca_components": 50,
+ "pca_random_state": 42,
+ "perplexity": 30,
+ "init": "pca",
+ "learning_rate": "auto",
+ "max_iter": 1000,
+ "metric": "euclidean",
+ "random_state": 42,
+ "method": "barnes_hut",
+ "angle": 0.5,
+ "n_jobs": 8,
+ "sklearn": "1.7.2"
+}

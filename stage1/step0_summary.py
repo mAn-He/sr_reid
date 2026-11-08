@@ -75,9 +75,9 @@ def sha_map(p):
 def repro_table():
     rows = []
     L = S0 / "repro" / "_logs"
-    for m, k in [("mambairv2", 3), ("mambairv2", 4), ("hat", 4), ("osdhuman", 4), ("pisa_sr_sem1.0", 4), ("pisa_sr_sem2.0", 4)]:
+    for m, k in [("mambairv2", 3), ("mambairv2", 4), ("hat", 3), ("hat", 4), ("osdhuman", 4)] + [(f"pisa_sr_sem{x}", 4) for x in ("0.0", "0.5", "1.0", "1.5", "2.0")]:
         for cfg in ("off", "det", "offw", "detw", "strictw"):
-            if not (L / f"{m}__x{k}__{cfg}__fwd.jsonl").exists() and cfg not in ("off", "det"):
+            if not (L / f"{m}__x{k}__{cfg}__fwd.jsonl").exists():  # A100: detw만 측정
                 continue
             a, b = sha_map(L / f"{m}__x{k}__{cfg}__fwd.jsonl"), sha_map(L / f"{m}__x{k}__{cfg}__rev.jsonl")
             sa = L / f"{m}__x{k}__{cfg}__fwd__summary.json"

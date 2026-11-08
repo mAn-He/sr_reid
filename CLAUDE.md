@@ -33,6 +33,11 @@
   - Stage 1: 표본 2,250장 × 12종 × {×3, ×4}만 `runs/stage1_sample/<method>/x<k>/<원본파일명>.webp`에 만든다(`stage1/sr_gen.py`, 실행 `stage1/run_gen.sh`). ×3: swinir·hat·mambairv2는 공식 ×3 가중치, **realesrgan·osdhuman·pisa_sr은 ×4 출력을 PIL BICUBIC으로 384×192 축소(세 방법 같은 커널, 2026-11-07 결정)**.
   - Stage 1 배치 정책 (가): realesrgan b4(배치 1과 비트 일치), 나머지 b1. 이미지마다 파일명 기반 고정 seed(sha256("42:<파일명>")).
   - Stage 1 결정적 설정(2026-11-07 결정): osdhuman·pisa_sr·mambairv2·hat은 `--det --warmup`(cudnn.benchmark=False, cudnn.deterministic=True, SDPA math만, 예열 1회) + 파일명 seed. swinir·realesrgan은 공식 설정. 공식 설정과의 차이는 `results/stage1/det_vs_official_*.csv`.
+- **A100 가속 방침 (2026-11-08 결정)**: 결과 픽셀이 바뀌는 방법은 쓰지 않는다.
+  - SR 생성: 배치 정책 (가) 유지(배치를 키우지 않음). GPU당 여러 프로세스 동시 실행, 프로세스 = 방법 하나(pisa_sr는 λ별). 한 방법의 ×3·×4 생성과 그 방법의 지표는 같은 GPU. 측정 결과 GPU당 4개(두 GPU 합계 7.09장/s, 1개 5.70장/s, `results/stage1/a100_concurrency_bench.csv`), 동시 실행 출력은 단독 실행과 비트 일치(`a100_concurrency_bitcheck.csv`). 프로세스당 OMP/MKL 4(8개 × 4 = 32 ≤ cgroup 54.4).
+  - 지표: DINOv3·PersonViT·A-FINE은 큰 배치 허용(임베딩 256, A-FINE 128). FFT·ΔE는 CPU 코어 수만큼 병렬(48 프로세스).
+  - 동시 실행 중 시간·처리량은 "병렬 실행 중 측정"으로 표시한다. 실행 `stage1/run_a100.sh`(main, check20, post), 사전 확인 `stage1/run_a100_check.sh`(repro, bench).
+  - **Stage 2: 학습 배치 크기는 레시피의 일부라 절대 바꾸지 않는다. 동시 실행만 허용한다.**
 - **Stage 1 평가 설정 (2026-11-07 결정)**
   - DINOv3: timm 변환본 ViT-L(`vit_large_patch16_dinov3.lvd1689m`), 256×128 PIL BICUBIC, CLS, RoPE 주기 bf16 보정. DINOv3 License 사용 표기 의무를 보고서에 기록.
   - PersonViT: ViT-B LUPerson 자기지도(checkpoint0260), mean/std 0.5/0.5. 한계: 사전학습 정규화 확인 불가, 체크포인트를 ReID 정확도로 고름.
@@ -69,16 +74,18 @@
 - `data/kpr/x2/bounding_box_train` 깨진 링크(→ 삭제된 `data/bicubic_x2`)는 그대로 둔다(기록만).
 
 ## 4. 서버 변경 이력
-| 항목 | 이전 서버 (~2026-11-01) | 새 서버 (2026-11-06~) |
-|---|---|---|
-| GPU | RTX 4090 24GB | RTX 4090 24GB (같은 모델) |
-| CPU | (기록 없음) | AMD EPYC 7282, cgroup CPU 13.6코어 |
-| cgroup | v1 | v2 |
-| 메모리 한도 | 57.7GiB | memory.max 116.4GiB (124,999,999,488 B) |
-| 드라이버/CUDA | (기록 없음) | 595.91.07 / CUDA 13.2 |
-| /workspace | 같은 네트워크 볼륨(MooseFS), 데이터 체크섬 37,793건 전수 일치 | 동일 |
+| 항목 | 이전 서버 (~2026-11-01) | 새 서버 (2026-11-06~11-07) | A100 서버 (2026-11-08~) |
+|---|---|---|---|
+| GPU | RTX 4090 24GB | RTX 4090 24GB (같은 모델) | A100 SXM4 80GB × 2 (Ampere sm_80) |
+| CPU | (기록 없음) | AMD EPYC 7282, cgroup CPU 13.6코어 | AMD EPYC 7713, cgroup CPU 54.4코어 (cpu.max 5440000/100000), nproc 255 |
+| cgroup | v1 | v2 | v2 |
+| 메모리 한도 | 57.7GiB | memory.max 116.4GiB (124,999,999,488 B) | memory.max 233.8GiB (250,999,996,416 B) |
+| 드라이버/CUDA | (기록 없음) | 595.91.07 / CUDA 13.2 | 595.91.07 / CUDA 13.2 |
+| /workspace | 같은 네트워크 볼륨(MooseFS), 데이터 체크섬 37,793건 전수 일치 | 동일 | 동일 볼륨(EUR-IS-1), / 오버레이 80GB |
 
 마이그레이션 때 사라진 것(모두 /root): DreamSim 가중치(링크 깨짐, 11-06 재다운로드), `/root/srreid_cache`, `/root/srreid_raw`(자동 재생성), `/root/.cache/torch`(pyiqa DISTS, 11-06 `TORCH_HOME`으로 재다운로드), Claude Code 바이너리, `/root/.gitconfig`(저장소 로컬 설정으로 대체).
+
+A100 이동(2026-11-08, 4090 pod 크레딧 소진): 8개 env(core, quality, clipreid, kpr, realesrgan, mambair, osdhuman, pisasr) 모두 A100에서 import·GPU 연산 통과. SR 6종 3장 추론(mambairv2 CUDA 확장 포함), BoT·CLIP-ReID·KPR·KPR+SOLIDER 학습 5스텝 통과(`logs/a100diag/`). KPR 계열은 프로세스 종료 뒤 DataLoader 작업자가 남아 GPU 메모리를 잡을 수 있으니 연속 실행 시 프로세스 그룹째 정리한다. setup_after_restart.sh는 이번에 빠뜨린 것 없음. 비트 재현성은 GPU 종류 안에서만 보장되므로 Stage 1은 A100에서 다시 하고 4090 결과는 `*_4090`에 보관.
 
 cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, `stage05/proc_watch.sh`. 결합 스크립트는 `stage05/ram_join.py`(이전 서버 `logs/stage05/cgroup_mem.csv`, 새 서버 `logs/stage05/cgroup_mem_v2.csv`).
 
@@ -93,5 +100,6 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - Stage 0, 파일럿, Stage 0.5 측정: 완료. 보고서는 `STAGE05_REPORT.md`, 3e 포함.
 - SR 배치 추론 측정 완료: `results/stage1_sr_batch_bench.csv`. 배치 1과 비트 일치는 realesrgan b≤4뿐. mambairv2·osdhuman·pisa_sr은 실행 안 처리 순서(RNG)에 따라 출력이 달라진다.
 - Stage 1 0단계 완료(`e553f53`), 사용자 결정 2026-11-07 반영.
-- **Stage 1 1~3단계 진행 중 (2026-11-07)**: 1단계 생성 `stage1/run_gen.sh`(main, official20, det20) → 2·3단계 `stage1/run_metrics.sh`(manifest, embed, fft, detoff, aggregate, plots, rows, report). 중간 산출물 `runs/stage1_metrics/`.
+- Stage 1 1~3단계 4090 실행(2026-11-07): 1·2단계 완료(`db4e188`, `3ce6209`), 3단계 그림 도중 pod 중단. 결과는 `runs/stage1_*_4090/`, `results/stage1_4090/`에 보관(A100 결과와 섞지 않음).
+- **Stage 1 A100 재실행 진행 중 (2026-11-08)**: 진단·env 확인 완료, A100 재현성 20장 10설정 전부 비트 일치(정방향 GPU0 대 역순 GPU1, `results/stage1/step0_repro.csv`), 동시 실행 측정 완료(GPU당 4). `P=4 bash stage1/run_a100.sh main check20 post` 실행 중(tmux s1a100, 로그 `logs/bg/s1a100.log`, `logs/stage1/a100/`).
 - 문서: `STAGE12_PLAN.md`, `STAGE05_PART_F_PLAN.md`.
