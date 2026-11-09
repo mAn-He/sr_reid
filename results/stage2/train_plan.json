@@ -1,0 +1,5 @@
+{"note": "2026-11-09 A100 200 iteration 시험(runs/stage2/trial, 병렬 실행 중 측정)으로 정함. vram_gib = 시험 peak_reserved + 여유 2~3GiB. 모든 작업 gradient checkpointing 끔(80GB 안에 들어감).",
+ "vram_gib": {"kpr_solider_x4": 76, "kpr_x4": 76, "kpr_solider_x3": 40, "kpr_x3": 40, "clipreid_x4": 33, "clipreid_x3": 16, "bot_x4": 21, "bot_x3": 13},
+ "cpu_cores": {"kpr_solider_x4": 8, "kpr_x4": 8, "kpr_solider_x3": 8, "kpr_x3": 8, "clipreid_x4": 10, "clipreid_x3": 10, "bot_x4": 6, "bot_x3": 6},
+ "ckpt": {"kpr_solider_x4": 0, "kpr_x4": 0, "kpr_solider_x3": 0, "kpr_x3": 0, "clipreid_x4": 0, "clipreid_x3": 0, "bot_x4": 0, "bot_x3": 0},
+ "vram_limit_gib": 78, "max_per_gpu": 3, "cpu_limit": 50, "stagger_s": 240}

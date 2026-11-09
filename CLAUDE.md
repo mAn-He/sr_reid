@@ -110,5 +110,5 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - Stage 1 0단계 완료(`e553f53`), 사용자 결정 2026-11-07 반영.
 - Stage 1 1~3단계 4090 실행(2026-11-07): 1·2단계 완료(`db4e188`, `3ce6209`), 3단계 그림 도중 pod 중단. 결과는 `runs/stage1_*_4090/`, `results/stage1_4090/`에 보관(A100 결과와 섞지 않음).
 - **Stage 1 A100 재실행 완료 (2026-11-08)**: 1단계 `95093ef`(48집합, 실패 0), 2단계 `14e1d5b`, 3단계 보고서 `STAGE1_REPORT.html`·`.md`(최악 10장 `STAGE1_REPORT_worst_x{3,4}.html`은 100MB 넘어 gitignore, 그림 PNG `results/stage1/figures/`도 커밋 안 함). 동시 실행 출력 = 단독 재생성 13설정 20/20 비트 일치.
-- **Stage 2 진행 중 (2026-11-09)**: SR 3개(swinir, pisa_sr λ0.0, osdhuman) 선정. 순서: train 생성 → (test 생성: 사용자 잠금 해제 대기) → 학습 32회(train 끝나면 시작) → 평가(잠금 해제 요청).
+- **Stage 2 진행 중 (2026-11-09)**: SR 3개(swinir, pisa_sr λ0.0, osdhuman). train 생성 완료(`e599890`), test 생성 완료(`cff2d3e`, 잠긴 영역, 사용자 재잠금 대상). 학습 시험(`results/stage2/train_trial_summary.csv`) 뒤 배치 계획 `results/stage2/train_plan.json`(KPR 계열 ×4는 GPU 단독 73GiB, 나머지는 GPU당 최대 3개, checkpointing 모두 끔). 학습 대기열 `stage2/train_queue.py` 실행 중(tmux s2train, 2026-11-09 08:42 시작, 출력 `runs/stage2/train/`). 평가는 학습 끝난 모델부터, 사용자 잠금 해제 뒤 `stage2/evaluate.py`.
 - 문서: `STAGE12_PLAN.md`, `STAGE05_PART_F_PLAN.md`.
