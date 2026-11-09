@@ -35,9 +35,21 @@ def image_seed(name):
     return int(hashlib.sha256(f"{SEED}:{name}".encode()).hexdigest()[:8], 16) & 0x7FFFFFFF
 
 
-def sample_names(limit=None, offset=0):
-    with open(SAMPLE) as f:
-        names = [Path(r["name"]).stem for r in csv.DictReader(f)]
+def input_dir(split):
+    """split 없음 = Stage 1 표본(train). train 입력은 data/sr_input/<split>, test는 data/locked/sr_input/<split>(원본 JPEG을 무손실 PNG로 푼 것)."""
+    if split in (None, "bounding_box_train"):
+        return ROOT / "data" / "sr_input" / "bounding_box_train"
+    return ROOT / "data" / "locked" / "sr_input" / split
+
+
+def sample_names(limit=None, offset=0, split=None, names_file=None):
+    if names_file:
+        names = [l.strip() for l in open(names_file) if l.strip()]
+    elif split:  # Stage 2: split 전체(파일명 정렬)
+        names = sorted(p[:-4] for p in os.listdir(input_dir(split)) if p.endswith(".png"))
+    else:
+        with open(SAMPLE) as f:
+            names = [Path(r["name"]).stem for r in csv.DictReader(f)]
     names = names[offset:]
     return names[:limit] if limit else names
 
@@ -74,6 +86,10 @@ def main():
     ap.add_argument("--log-name", default=None)
     ap.add_argument("--warmup", action="store_true", help="본 처리 전에 첫 이미지를 한 번 돌려 버린다(프로세스 첫 추론의 커널 선택 차이 제거). 첫 추론과 본 추론의 차이를 기록")
     ap.add_argument("--reverse", action="store_true", help="재현성 측정용: 처리 순서를 뒤집는다")
+    ap.add_argument("--split", choices=["bounding_box_train", "query", "bounding_box_test"], default=None,
+                    help="Stage 2 전체 생성: 출력 <out>/<method>/x<k>/<split>/, 입력 input_dir(split). 없으면 Stage 1 표본")
+    ap.add_argument("--names-file", default=None, help="이 파일의 이름 목록만(조각별 단독 확인용)")
+    ap.add_argument("--log-dir", default=None, help="기본 <out>/_logs")
     ap.add_argument("--start-at", type=float, default=None, help="동시 실행 측정용: 모델 적재·예열 뒤 이 epoch 시각까지 기다렸다가 본 처리를 시작")
     a = ap.parse_args()
 
@@ -85,13 +101,14 @@ def main():
     from PIL import Image
 
     mname = a.method if a.method != "pisa_sr" else f"pisa_sr_sem{a.lambda_sem}"
-    sub = f"x{a.k}" + (f"_{a.tag}" if a.tag else "")
+    sub = f"x{a.k}" + (f"_{a.tag}" if a.tag else "") + (f"/{a.split}" if a.split else "")
     a.out = str(Path(a.out).resolve())  # 뒤에서 os.chdir를 하므로 절대 경로로 고정
     out_dir = Path(a.out) / mname / sub
-    log_dir = Path(a.out) / "_logs"
+    log_dir = Path(a.log_dir).resolve() if a.log_dir else Path(a.out) / "_logs"
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_name = a.log_name or f"{mname}__{sub}"
-    names = sample_names(a.limit, a.offset)
+    log_name = a.log_name or f"{mname}__{sub}".replace("/", "__")
+    INP = input_dir(a.split)
+    names = sample_names(a.limit, a.offset, a.split, a.names_file)
     pending = names if a.no_write else [n for n in names if not (out_dir / f"{n}.webp").exists()]
     if a.reverse:
         pending = pending[::-1]
@@ -105,7 +122,7 @@ def main():
     if a.method in CLASSIC or a.from_x4:
         # CPU 경로. classic: 원본 PNG를 PIL로 k배. from_x4: 같은 루트의 ×4 WebP를 PIL BICUBIC으로 축소.
         resample = Image.LANCZOS if a.method == "lanczos" else Image.BICUBIC
-        src4 = Path(a.out) / mname / "x4"
+        src4 = Path(a.out) / mname / ("x4" + (f"/{a.split}" if a.split else ""))
         n_ok = 0
         for n in pending:
             t0 = time.perf_counter()
@@ -133,6 +150,7 @@ def main():
         spec = importlib.util.spec_from_file_location("sr_batch_bench", str(bench_path))
         bb = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(bb)
+        bb.INP = INP  # 어댑터의 prep·초기화가 모듈 전역 INP를 읽는다(test split 입력)
         bb.WORK.mkdir(parents=True, exist_ok=True)
         os.chdir(bb.WORK.parent)
         import torch

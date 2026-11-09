@@ -21,8 +21,9 @@
     - 해석 기준선(약한 변형, 같은 사람 다른 카메라)은 그림에만 겹쳐 그린다. 집계: 이미지 → 신원 평균 → 751명 평균, 신원 단위 부트스트랩 95% CI(10,000회, seed 42).
     - 취소된 것: 선정 규칙(`STAGE1_SELECTION_RULE.md`는 "취소됨" 표시로 보존), 가중 평균 순위, 파레토 선정, 탈락 단계, 스모크 파일럿, 보정 실험, ReID 모델 기반 지표, 속성 모델, 자기 찾기 비율, 사람 영역 패치·어텐션 비교, ×2.
     - 단계: 0단계(모델 로드·재현성·×3 방식 확인, 보고 후 멈춤) → 1단계 SR 생성 → 2단계 지표 → 3단계 시각화. 산출물 `results/stage1/`, `results/stage1/figures/`, `STAGE1_REPORT.html`, `STAGE1_REPORT.md`.
-  - 생성: 선정된 SR 2개 + bicubic만 train·test 전체를 ×3·×4로 만든다. bicubic은 기존 `data/bicubic_x{3,4}`를 재사용한다.
-  - Stage 2: 모델 4종 × {bicubic, SR1, SR2} × {×3, ×4}, seed 42. 평가는 2×2로 (bicubic 학습 모델, SR 학습 모델) × (bicubic test, SR test)다.
+  - **Stage 2 대상 확정(2026-11-09 사용자 결정): SR 3개 = swinir, pisa_sr λ0.0(`pisa_l0`, 폴더 이름 `pisa_sr_sem0.0`), osdhuman + bicubic 기준.**
+  - 생성: SR 3개의 train 전체(12,936장)와 test(query 3,368 + gallery 19,732)를 ×3·×4로 만든다. bicubic train은 기존 `data/bicubic_x{3,4}`를 재사용하고 test ×3·×4는 새로 만든다.
+  - Stage 2: 모델 4종 × {bicubic, swinir, pisa_l0, osdhuman} × {×3, ×4} = 학습 32회, seed 42. 평가는 SR 조건마다 2×2로 (bicubic 학습 모델, SR 학습 모델) × (bicubic test, SR test), mAP·Rank-1, 신원 단위 부트스트랩 95% CI, bicubic 대비 useful / harmful / inconclusive.
 - 기준선은 공개 가중치를 공식 입력으로 평가한 참고 행이다(학습하지 않음). mAP/R1: BoT 85.95/94.63, CLIP-ReID 89.66/95.43, KPR 89.59/95.87, KPR+SOLIDER 93.25/96.59 (`results/baseline_public_weights.csv`).
 
 ## 2. 확정된 결정
@@ -38,6 +39,11 @@
   - 지표: DINOv3·PersonViT·A-FINE은 큰 배치 허용(임베딩 256, A-FINE 128). FFT·ΔE는 CPU 코어 수만큼 병렬(48 프로세스).
   - 동시 실행 중 시간·처리량은 "병렬 실행 중 측정"으로 표시한다. 실행 `stage1/run_a100.sh`(main, check20, post), 사전 확인 `stage1/run_a100_check.sh`(repro, bench).
   - **Stage 2: 학습 배치 크기는 레시피의 일부라 절대 바꾸지 않는다. 동시 실행만 허용한다.**
+- **Stage 2 학습 설정 (2026-11-09 결정)**
+  - 확정 설정 유지: memmap, BoT worker_norm, KPR copy_read + float32 마스크(원본 키포인트 기반 스케일 마스크를 모든 조건에 동일하게), BIPO는 학습에서만, 핀 메모리 켬.
+  - 각 모델 공식 레시피 기본 설정. 등가성 검증 때의 결정론 모드는 끄고 공식 코드의 cudnn.benchmark 등 기본값 그대로. 실제 설정을 학습마다 기록.
+  - 배치 크기, 정밀도(AMP·TF32 행렬곱), torch.compile 등 수치가 바뀌는 변경 금지. gradient checkpointing은 켜고 끄는 것이 비트 단위로 같음을 확인했으므로 A100 80GB에서 메모리가 허용하면 끈다(모델·배율별 기록).
+  - 가속: KPR·KPR+SOLIDER ×4를 먼저 GPU 2장에 배치하고 남는 자리를 BoT·CLIP-ReID로(GPU당 2~3개까지). 200 iteration 시험으로 GPU별 조합 처리량 비교 후 선택. VRAM·CPU 여유 기반 자동 대기열, 완료분 건너뜀. 학습 전 모든 조건 memmap 캐시, RAM 여유 시 /dev/shm. 스레드·DataLoader worker는 cgroup CPU 한도 안에서 배분. 평가는 다음 학습과 겹쳐 진행. 동시 실행 중 시간은 "병렬 실행 중 측정".
 - **Stage 1 평가 설정 (2026-11-07 결정)**
   - DINOv3: timm 변환본 ViT-L(`vit_large_patch16_dinov3.lvd1689m`), 256×128 PIL BICUBIC, CLS, RoPE 주기 bf16 보정. DINOv3 License 사용 표기 의무를 보고서에 기록.
   - PersonViT: ViT-B LUPerson 자기지도(checkpoint0260), mean/std 0.5/0.5. 한계: 사전학습 정규화 확인 불가, 체크포인트를 ReID 정확도로 고름.
@@ -45,7 +51,8 @@
   - 분포 거리(Fréchet, KID): L2 정규화 임베딩, 고윳값 분해. 기준선: 블러 σ=0.5, JPEG 90, 같은 사람 다른 카메라.
   - env: 새 env를 만들지 않는다. scikit-learn 1.7.2를 srreid-quality에 설치(충돌 없음). 다른 패키지도 기존 env에 설치하고 충돌 시 멈추고 보고. srreid-mambair의 python 링크(→ srreid-realesrgan)는 그대로 둔다.
   - HTML: 그림은 축소 JPEG(품질 85) 내장, 원본 PNG는 `results/stage1/figures/`(커밋 안 함). 최악 10장은 별도 HTML(배율별).
-  - Stage 1 승인 뒤: 선정 2개 방법의 train·query·gallery ×3·×4. bicubic은 기존 데이터를 재사용한다.
+  - **Stage 2 생성 설정(2026-11-09)**: Stage 1과 같은 설정(swinir ×3 공식 ×3 가중치, pisa_sr·osdhuman ×3 = ×4 후 PIL BICUBIC 축소, osdhuman·pisa_sr `--det --warmup` + 파일명 seed, swinir 공식 설정, b1). GPU 작업(swinir ×3, swinir ×4, pisa ×4, osdhuman ×4)을 이미지 목록 조각(shard)으로 나눠 GPU 2장 × 4 프로세스 공유 대기열로 돌린다(pisa·osdhuman은 더 잘게). ×3 축소·bicubic test는 CPU 작업으로 겹쳐 돈다. 조각마다 20장을 단독 실행과 비트 비교, Stage 1 표본 2,250장은 Stage 1 출력과 비트 비교. 실행 `stage2/run_gen.sh`.
+  - 저장: train은 `data/<condition>/x<k>/bounding_box_train/<이름>.webp`. test는 실제 파일을 잠긴 영역 `data/locked/sr/<condition>/x<k>/<split>/`에 두고 `data/<condition>/x<k>/<split>`는 그곳을 가리키는 링크(재잠금 때 chmod 000이 test 출력까지 덮음, 가드도 경로의 query·bounding_box_test를 막음). test 로그·manifest도 `data/locked/sr/_logs/`.
   - 스모크 출력 `runs/stage05/sr_smoke/`(train 100장 × 12종)는 지우지 않는다.
   - 일괄 생성은 완성 WebP를 즉시 /workspace(`data/<method>/x<k>/<split>/`)에 쓰고, 재시작하면 남은 파일부터 이어서 생성한다(`sr_generate.py`가 완성 파일을 건너뜀).
 - **memmap**: 4개 모델 모두 채택 확정(`results/stage05_3abcd_summary.md`).
@@ -64,7 +71,7 @@
   - 가중치·env·HF/torch 캐시는 /workspace에 둔다: `TORCH_HOME=/workspace/weights/torch`, `HF_HOME=/workspace/.cache/huggingface`, DreamSim은 `weights/stage05/dreamsim`(실제 디렉터리). /root를 가리키는 가중치 링크는 만들지 않는다.
 
 ## 3. 금지 사항
-- **SR 일괄 생성(선정 방법의 train·test 전체)은 사용자가 Stage 1 결과를 승인하고 2개 방법을 선정하기 전까지 시작하지 않는다.**
+- (해제됨 2026-11-09) SR 일괄 생성은 Stage 1 선정 뒤 시작한다. 선정 완료: swinir, pisa_sr λ0.0, osdhuman.
 - test 이미지(query, bounding_box_test, gt_*)는 SR 생성만 허용하고 평가·열람하지 않는다. 예외는 공개 가중치 기준선·등가성 측정(이미 끝남)뿐이다. `data/locked`의 권한 변경·열람 금지. 가드는 `common/guard.py`(ALLOW_TEST=1일 때만 허용)다.
 - 학습 레시피 변경 금지(입력 크기 제외): 배치, PK 샘플링, 학습률, 스케줄, epoch, 옵티마이저, 정밀도, 증강.
 - 외부 모델·SR 저장소(`third_party/`) 소스 수정 금지. config, 래퍼, 서브클래스, 어댑터로만 바꾼다.
@@ -96,10 +103,11 @@ cgroup 기록 도구는 v1·v2를 자동 판별한다: `stage05/cgroup_log.py`, 
 - 모델 파이프라인 근거: `docs/PIPELINE_<model>.md`, 입력 크기 `docs/INPUT_SIZE_POLICY.md`
 - 알려진 기록: `runs/stage05/done/d9_data_kpr_memmap.json`은 2026-11-01 01:47 쿼터 사건으로 0바이트였다. KPR memmap 등가성은 d10 copy_read 비교로 대신 확정했다.
 
-## 6. 현재 진행 단계 (갱신: 2026-11-07)
+## 6. 현재 진행 단계 (갱신: 2026-11-09)
 - Stage 0, 파일럿, Stage 0.5 측정: 완료. 보고서는 `STAGE05_REPORT.md`, 3e 포함.
 - SR 배치 추론 측정 완료: `results/stage1_sr_batch_bench.csv`. 배치 1과 비트 일치는 realesrgan b≤4뿐. mambairv2·osdhuman·pisa_sr은 실행 안 처리 순서(RNG)에 따라 출력이 달라진다.
 - Stage 1 0단계 완료(`e553f53`), 사용자 결정 2026-11-07 반영.
 - Stage 1 1~3단계 4090 실행(2026-11-07): 1·2단계 완료(`db4e188`, `3ce6209`), 3단계 그림 도중 pod 중단. 결과는 `runs/stage1_*_4090/`, `results/stage1_4090/`에 보관(A100 결과와 섞지 않음).
-- **Stage 1 A100 재실행 완료 (2026-11-08)**: 1단계 `95093ef`(48집합, 실패 0), 2단계 `14e1d5b`, 3단계 보고서 `STAGE1_REPORT.html`·`.md`(최악 10장 `STAGE1_REPORT_worst_x{3,4}.html`은 100MB 넘어 gitignore, 그림 PNG `results/stage1/figures/`도 커밋 안 함). 동시 실행 출력 = 단독 재생성 13설정 20/20 비트 일치. **사용자의 결과 검토와 SR 2개 선정 대기.**
+- **Stage 1 A100 재실행 완료 (2026-11-08)**: 1단계 `95093ef`(48집합, 실패 0), 2단계 `14e1d5b`, 3단계 보고서 `STAGE1_REPORT.html`·`.md`(최악 10장 `STAGE1_REPORT_worst_x{3,4}.html`은 100MB 넘어 gitignore, 그림 PNG `results/stage1/figures/`도 커밋 안 함). 동시 실행 출력 = 단독 재생성 13설정 20/20 비트 일치.
+- **Stage 2 진행 중 (2026-11-09)**: SR 3개(swinir, pisa_sr λ0.0, osdhuman) 선정. 순서: train 생성 → (test 생성: 사용자 잠금 해제 대기) → 학습 32회(train 끝나면 시작) → 평가(잠금 해제 요청).
 - 문서: `STAGE12_PLAN.md`, `STAGE05_PART_F_PLAN.md`.

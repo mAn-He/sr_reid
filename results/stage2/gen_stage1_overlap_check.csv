@@ -1,0 +1,9 @@
+condition,k,stage2_source,n_stage1,n_compared,n_bit_identical,diff_names
+swinir,3,data/swinir/x3/bounding_box_train,2250,2250,2250,
+swinir,4,data/swinir/x4/bounding_box_train,2250,2250,2250,
+pisa_sr_sem0.0,3,data/pisa_sr_sem0.0/x3/bounding_box_train,2250,2250,2250,
+pisa_sr_sem0.0,4,data/pisa_sr_sem0.0/x4/bounding_box_train,2250,2250,2250,
+osdhuman,3,data/osdhuman/x3/bounding_box_train,2250,2250,2250,
+osdhuman,4,data/osdhuman/x4/bounding_box_train,2250,2250,2250,
+bicubic,3,data/bicubic_x3 (재사용 PNG),2250,2250,2250,
+bicubic,4,data/bicubic_x4 (재사용 PNG),2250,2250,2250,

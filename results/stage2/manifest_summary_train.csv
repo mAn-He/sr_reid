@@ -1,0 +1,7 @@
+condition,k,split,expected,present,missing,wrong_size,log_sha_mismatch,log_sha_missing,tmp_files,total_bytes
+swinir,3,bounding_box_train,12936,12936,0,0,0,0,0,677281742
+swinir,4,bounding_box_train,12936,12936,0,0,0,0,0,1065548962
+pisa_sr_sem0.0,3,bounding_box_train,12936,12936,0,0,0,0,0,806768932
+pisa_sr_sem0.0,4,bounding_box_train,12936,12936,0,0,0,0,0,1228354446
+osdhuman,3,bounding_box_train,12936,12936,0,0,0,0,0,1021794146
+osdhuman,4,bounding_box_train,12936,12936,0,0,0,0,0,1741690110
