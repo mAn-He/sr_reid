@@ -1,0 +1,17 @@
+condition,k,split,expected,present,missing,wrong_size,log_sha_mismatch,log_sha_missing,tmp_files,total_bytes
+swinir,3,query,3368,3368,0,0,0,0,0,178955440
+swinir,4,query,3368,3368,0,0,0,0,0,281641132
+pisa_sr_sem0.0,3,query,3368,3368,0,0,0,0,0,213305552
+pisa_sr_sem0.0,4,query,3368,3368,0,0,0,0,0,325467072
+osdhuman,3,query,3368,3368,0,0,0,0,0,269400026
+osdhuman,4,query,3368,3368,0,0,0,0,0,459990254
+bicubic,3,query,3368,3368,0,0,0,0,0,137558842
+bicubic,4,query,3368,3368,0,0,0,0,0,214254776
+swinir,3,bounding_box_test,19732,19732,0,0,0,0,0,1014933070
+swinir,4,bounding_box_test,19732,19732,0,0,0,0,0,1596332948
+pisa_sr_sem0.0,3,bounding_box_test,19732,19732,0,0,0,0,0,1216706396
+pisa_sr_sem0.0,4,bounding_box_test,19732,19732,0,0,0,0,0,1853044444
+osdhuman,3,bounding_box_test,19732,19732,0,0,0,0,0,1558493894
+osdhuman,4,bounding_box_test,19732,19732,0,0,0,0,0,2667372146
+bicubic,3,bounding_box_test,19732,19732,0,0,0,0,0,775333742
+bicubic,4,bounding_box_test,19732,19732,0,0,0,0,0,1200903216

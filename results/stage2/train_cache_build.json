@@ -1,0 +1,70 @@
+{
+ "cache_root": "/dev/shm/srreid_cache",
+ "rows": [
+  {
+   "cond": "bicubic",
+   "k": 3,
+   "path": "/dev/shm/srreid_cache/bicubic__x3__bounding_box_train.u8",
+   "seconds": 0.0,
+   "bytes": 2861236224,
+   "reused": true
+  },
+  {
+   "cond": "bicubic",
+   "k": 4,
+   "path": "/dev/shm/srreid_cache/bicubic__x4__bounding_box_train.u8",
+   "seconds": 0.0,
+   "bytes": 5086642176,
+   "reused": true
+  },
+  {
+   "cond": "swinir",
+   "k": 3,
+   "path": "/dev/shm/srreid_cache/swinir__x3__bounding_box_train.u8",
+   "seconds": 8.468507075915113,
+   "bytes": 2861236224,
+   "reused": false
+  },
+  {
+   "cond": "swinir",
+   "k": 4,
+   "path": "/dev/shm/srreid_cache/swinir__x4__bounding_box_train.u8",
+   "seconds": 9.228119072970003,
+   "bytes": 5086642176,
+   "reused": false
+  },
+  {
+   "cond": "pisa_sr_sem0.0",
+   "k": 3,
+   "path": "/dev/shm/srreid_cache/pisa_sr_sem0.0__x3__bounding_box_train.u8",
+   "seconds": 8.71072458801791,
+   "bytes": 2861236224,
+   "reused": false
+  },
+  {
+   "cond": "pisa_sr_sem0.0",
+   "k": 4,
+   "path": "/dev/shm/srreid_cache/pisa_sr_sem0.0__x4__bounding_box_train.u8",
+   "seconds": 10.103808511979878,
+   "bytes": 5086642176,
+   "reused": false
+  },
+  {
+   "cond": "osdhuman",
+   "k": 3,
+   "path": "/dev/shm/srreid_cache/osdhuman__x3__bounding_box_train.u8",
+   "seconds": 8.869186203926802,
+   "bytes": 2861236224,
+   "reused": false
+  },
+  {
+   "cond": "osdhuman",
+   "k": 4,
+   "path": "/dev/shm/srreid_cache/osdhuman__x4__bounding_box_train.u8",
+   "seconds": 10.286705080186948,
+   "bytes": 5086642176,
+   "reused": false
+  }
+ ],
+ "total_gib": 29.608154296875
+}

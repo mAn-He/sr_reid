@@ -39,6 +39,7 @@
   - 지표: DINOv3·PersonViT·A-FINE은 큰 배치 허용(임베딩 256, A-FINE 128). FFT·ΔE는 CPU 코어 수만큼 병렬(48 프로세스).
   - 동시 실행 중 시간·처리량은 "병렬 실행 중 측정"으로 표시한다. 실행 `stage1/run_a100.sh`(main, check20, post), 사전 확인 `stage1/run_a100_check.sh`(repro, bench).
   - **Stage 2: 학습 배치 크기는 레시피의 일부라 절대 바꾸지 않는다. 동시 실행만 허용한다.**
+- **Stage 2 판정 규칙 (2026-11-09 사용자 결정)**: 주 지표 mAP, Rank-1은 보조. 모델·배율·SR 조건마다 (S_k 모델 + SR test) − (C_k 모델 + bicubic test) 차이, 신원 단위 쌍 부트스트랩 95% CI(10,000회, seed 42). CI 하한 > 0 useful, 상한 < 0 harmful, 0 포함 inconclusive. 2×2의 나머지 두 칸(train만 SR, test만 SR)은 같은 방식으로 차이와 CI만 보고. 보고서 한계에 다중 비교(24회)와 seed 1개라 CI가 학습 변동을 반영하지 못한다는 점을 명시.
 - **Stage 2 학습 설정 (2026-11-09 결정)**
   - 확정 설정 유지: memmap, BoT worker_norm, KPR copy_read + float32 마스크(원본 키포인트 기반 스케일 마스크를 모든 조건에 동일하게), BIPO는 학습에서만, 핀 메모리 켬.
   - 각 모델 공식 레시피 기본 설정. 등가성 검증 때의 결정론 모드는 끄고 공식 코드의 cudnn.benchmark 등 기본값 그대로. 실제 설정을 학습마다 기록.

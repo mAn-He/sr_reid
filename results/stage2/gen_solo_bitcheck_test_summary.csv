@@ -1,0 +1,9 @@
+condition,k,split,shards,n,n_bit_identical
+pisa_sr_sem0.0,4,query,12,240,240
+osdhuman,4,query,12,240,240
+swinir,3,query,3,60,60
+swinir,4,query,3,60,60
+pisa_sr_sem0.0,4,bounding_box_test,12,240,240
+osdhuman,4,bounding_box_test,12,240,240
+swinir,3,bounding_box_test,3,60,60
+swinir,4,bounding_box_test,3,60,60
