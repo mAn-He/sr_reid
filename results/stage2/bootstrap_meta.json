@@ -1,0 +1,8 @@
+{
+ "n_rep": 10000,
+ "seed": 42,
+ "n_id": 750,
+ "resample_sha256": "21b70bb0676f4edfb4dbf80b2173ee7ac5b52bbffc8a67bfff923e79c1a4b87e",
+ "method": "identity-level paired bootstrap over query pids, np.random.default_rng(42).integers(0, n_id, (n_rep, n_id)); replicate metric = mean over all valid queries of sampled identities with multiplicity; percentile 95% CI (linear)",
+ "updated": "2026-11-11T16:23:13"
+}

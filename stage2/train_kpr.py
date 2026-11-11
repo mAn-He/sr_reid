@@ -501,7 +501,13 @@ def extract(a):
     cfg = build_config(args=args, config_path=str(yaml_path))
     engine, net = build_torchreid_model_engine(cfg)
     sd = torch.load(a.model_pth, map_location="cpu")["state_dict"]
-    net.load_state_dict(sd, strict=True)  # 공식 load_pretrained_weights는 불일치 층을 조용히 버리므로 strict로 다시 확인
+    # 공식 load_pretrained_weights는 불일치 층을 조용히 버리므로 다시 확인한다. KPR+SOLIDER 공식 test yaml은 semantic_weight -1.0이라
+    # 평가 모델에 semantic_embed_* 층이 없고 공식 로더가 그 키를 버린다(공식 동작). 그 키만 허용하고 나머지 불일치는 오류.
+    res = net.load_state_dict(sd, strict=False)
+    allowed = [k for k in res.unexpected_keys if ".semantic_embed_" in k]
+    if res.missing_keys or len(allowed) != len(res.unexpected_keys):
+        raise RuntimeError(f"가중치 불일치: missing {res.missing_keys[:5]}, unexpected {[k for k in res.unexpected_keys if k not in allowed][:5]}")
+    discarded_semantic = len(allowed)
     engine.set_model_mode("eval")
     loader = engine.test_loader[ename]["query"]
     feats, vis, pids, cams, got = [], [], [], [], []
@@ -525,7 +531,7 @@ def extract(a):
     r = {"mode": "extract", "model": a.model, "model_pth": str(a.model_pth), "model_sha256": sha256_file(a.model_pth), "cond": a.cond, "k": a.k, "split": split,
          "n": len(got), "feat_shape": list(F.shape), "vis_dtype": str(vis[0].dtype), "test_embeddings": list(cfg.model.kpr.test_embeddings),
          "normalize_feature": bool(cfg.test.normalize_feature), "dist_metric": cfg.test.dist_metric, "combine": cfg.test.part_based.dist_combine_strat,
-         "amp": False, "eval_batch": a.eval_batch, "seconds": round(time.perf_counter() - t0, 2), "env": env_info(a),
+         "amp": False, "eval_batch": a.eval_batch, "discarded_semantic_embed_keys": discarded_semantic, "seconds": round(time.perf_counter() - t0, 2), "env": env_info(a),
          "peak_alloc_gib": gib(torch.cuda.max_memory_allocated())}
     atomic_write(out / "extract.json", json.dumps(r, indent=1, ensure_ascii=False))
     os.system(f"rm -rf '{out / 'engine'}'")

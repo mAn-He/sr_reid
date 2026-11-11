@@ -1,0 +1,65 @@
+time,event,job,gpu,ckpt,rc,seconds,note
+2026-11-09 08:42:29,start,kpr_solider__bicubic__x3,0,0,,,"committed 0+40GiB, used 36GiB, cpu 0+8"
+2026-11-09 08:42:29,start,kpr_solider__bicubic__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 8+8"
+2026-11-09 08:46:30,start,clipreid__bicubic__x4,0,0,,,"committed 40+33GiB, used 36GiB, cpu 16+10"
+2026-11-09 11:40:28,end,clipreid__bicubic__x4,0,0,0,10437,
+2026-11-09 11:40:28,start,clipreid__swinir__x4,0,0,,,"committed 40+33GiB, used 37GiB, cpu 16+10"
+2026-11-09 13:54:39,end,kpr_solider__bicubic__x4,1,0,0,18729,
+2026-11-09 13:54:39,start,kpr_solider__swinir__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 18+8"
+2026-11-09 14:37:08,end,clipreid__swinir__x4,0,0,0,10600,
+2026-11-09 14:37:08,start,clipreid__pisa_sr_sem0.0__x4,0,0,,,"committed 40+33GiB, used 37GiB, cpu 16+10"
+2026-11-09 17:28:45,end,kpr_solider__bicubic__x3,0,0,0,31576,
+2026-11-09 17:28:45,start,kpr_solider__swinir__x3,0,0,,,"committed 33+40GiB, used 32GiB, cpu 18+8"
+2026-11-09 17:30:26,end,clipreid__pisa_sr_sem0.0__x4,0,0,0,10397,
+2026-11-09 17:32:46,start,clipreid__osdhuman__x4,0,0,,,"committed 40+33GiB, used 36GiB, cpu 16+10"
+2026-11-09 19:29:36,end,kpr_solider__swinir__x4,1,0,0,20097,
+2026-11-09 19:29:36,start,kpr_solider__pisa_sr_sem0.0__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 18+8"
+2026-11-09 20:07:05,end,clipreid__osdhuman__x4,0,0,0,9259,
+2026-11-09 20:07:05,start,bot__bicubic__x4,0,0,,,"committed 40+21GiB, used 37GiB, cpu 16+6"
+2026-11-09 20:11:06,start,clipreid__bicubic__x3,0,0,,,"committed 61+16GiB, used 56GiB, cpu 22+10"
+2026-11-09 22:40:17,end,clipreid__bicubic__x3,0,0,0,8951,
+2026-11-09 22:40:17,start,clipreid__swinir__x3,0,0,,,"committed 61+16GiB, used 56GiB, cpu 22+10"
+2026-11-09 23:50:53,end,bot__bicubic__x4,0,0,0,13428,
+2026-11-09 23:50:53,start,bot__swinir__x4,0,0,,,"committed 56+21GiB, used 52GiB, cpu 26+6"
+2026-11-10 00:46:25,end,kpr_solider__pisa_sr_sem0.0__x4,1,0,0,19009,
+2026-11-10 00:46:25,start,kpr_solider__osdhuman__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 24+8"
+2026-11-10 01:08:30,end,clipreid__swinir__x3,0,0,0,8893,
+2026-11-10 01:08:30,start,clipreid__pisa_sr_sem0.0__x3,0,0,,,"committed 61+16GiB, used 56GiB, cpu 22+10"
+2026-11-10 02:20:28,end,kpr_solider__swinir__x3,0,0,0,31903,
+2026-11-10 02:20:28,start,kpr_solider__pisa_sr_sem0.0__x3,0,0,,,"committed 37+40GiB, used 35GiB, cpu 24+8"
+2026-11-10 03:40:05,end,clipreid__pisa_sr_sem0.0__x3,0,0,0,9095,
+2026-11-10 03:40:05,start,clipreid__osdhuman__x3,0,0,,,"committed 61+16GiB, used 55GiB, cpu 22+10"
+2026-11-10 03:41:05,end,bot__swinir__x4,0,0,0,13812,
+2026-11-10 03:44:06,start,bot__pisa_sr_sem0.0__x4,0,0,,,"committed 56+21GiB, used 39GiB, cpu 26+6"
+2026-11-10 05:59:17,end,kpr_solider__osdhuman__x4,1,0,0,18772,
+2026-11-10 05:59:17,start,kpr__bicubic__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 24+8"
+2026-11-10 06:16:40,end,clipreid__osdhuman__x3,0,0,0,9395,
+2026-11-10 06:16:40,start,bot__bicubic__x3,0,0,,,"committed 61+13GiB, used 56GiB, cpu 22+6"
+2026-11-10 07:51:19,end,bot__pisa_sr_sem0.0__x4,0,0,0,14833,
+2026-11-10 07:51:19,start,bot__osdhuman__x4,0,0,,,"committed 53+21GiB, used 48GiB, cpu 22+6"
+2026-11-10 08:55:11,end,bot__bicubic__x3,0,0,0,9511,
+2026-11-10 08:55:11,start,bot__swinir__x3,0,0,,,"committed 61+13GiB, used 56GiB, cpu 22+6"
+2026-11-10 11:12:40,end,kpr__bicubic__x4,1,0,0,18803,
+2026-11-10 11:12:40,start,kpr__swinir__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 20+8"
+2026-11-10 11:33:05,end,bot__swinir__x3,0,0,0,9473,
+2026-11-10 11:33:05,start,bot__pisa_sr_sem0.0__x3,0,0,,,"committed 61+13GiB, used 56GiB, cpu 22+6"
+2026-11-10 12:05:51,end,bot__osdhuman__x4,0,0,0,15272,
+2026-11-10 12:05:51,start,bot__osdhuman__x3,0,0,,,"committed 53+13GiB, used 48GiB, cpu 22+6"
+2026-11-10 14:16:20,end,bot__pisa_sr_sem0.0__x3,0,0,0,9796,
+2026-11-10 14:43:29,end,bot__osdhuman__x3,0,0,0,9458,
+2026-11-10 14:53:12,end,kpr_solider__pisa_sr_sem0.0__x3,0,0,0,45164,
+2026-11-10 14:53:12,start,kpr__pisa_sr_sem0.0__x4,0,0,,,"committed 0+76GiB, used 0GiB, cpu 8+8"
+2026-11-10 16:28:32,end,kpr__swinir__x4,1,0,0,18952,
+2026-11-10 16:28:32,start,kpr__osdhuman__x4,1,0,,,"committed 0+76GiB, used 0GiB, cpu 8+8"
+2026-11-10 21:05:50,end,kpr__pisa_sr_sem0.0__x4,0,0,0,22358,
+2026-11-10 21:05:51,start,kpr_solider__osdhuman__x3,0,0,,,"committed 0+40GiB, used 0GiB, cpu 8+8"
+2026-11-10 21:42:50,end,kpr__osdhuman__x4,1,0,0,18859,
+2026-11-10 21:42:50,start,kpr__bicubic__x3,1,0,,,"committed 0+40GiB, used 0GiB, cpu 8+8"
+2026-11-11 03:50:58,end,kpr_solider__osdhuman__x3,0,0,0,24308,
+2026-11-11 03:50:58,start,kpr__swinir__x3,0,0,,,"committed 0+40GiB, used 0GiB, cpu 8+8"
+2026-11-11 03:56:20,end,kpr__bicubic__x3,1,0,0,22410,
+2026-11-11 03:56:20,start,kpr__pisa_sr_sem0.0__x3,1,0,,,"committed 0+40GiB, used 0GiB, cpu 8+8"
+2026-11-11 11:05:31,end,kpr__pisa_sr_sem0.0__x3,1,0,0,25751,
+2026-11-11 11:05:31,start,kpr__osdhuman__x3,1,0,,,"committed 0+40GiB, used 0GiB, cpu 8+8"
+2026-11-11 11:08:12,end,kpr__swinir__x3,0,0,0,26234,
+2026-11-11 15:51:46,end,kpr__osdhuman__x3,1,0,0,17175,
