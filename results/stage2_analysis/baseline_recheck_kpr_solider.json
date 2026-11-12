@@ -1,0 +1,1 @@
+{"model": "kpr_solider", "input": "384x128", "mAP": 93.25, "rank1": 96.59, "ref_mAP": 93.25, "ref_rank1": 96.59, "n_query_valid": 3368, "n_gallery": 15913, "pass": true}

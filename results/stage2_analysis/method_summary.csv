@@ -1,0 +1,7 @@
+SR,배율,DINOv3 코사인↑,PersonViT 코사인↑,A-FINE 총점↓,A-FINE 충실도↓,A-FINE 자연스러움↓,저주파 일치도↑,고주파 추가량 dB(방향 없음),기울기 편차(0이 원본),격자 피크 dB↓,ΔE2000↓,ΔmAP BoT %p,ΔmAP CLIP-ReID %p,ΔmAP KPR %p,ΔmAP KPR+SOLIDER %p
+swinir,3,0.9513,0.993,45.022,-1.8745,-0.2224,0.9989,6.8129,-3.9252,8.5544,0.0786,-0.22 (inconclusive),-0.24 (harmful),-5.21 (harmful),+4.22 (useful)
+swinir,4,0.9487,0.9932,45.2022,-1.8683,-0.1717,0.9988,6.6494,-3.4237,12.7122,0.0729,-0.28 (inconclusive),-0.27 (harmful),+0.22 (inconclusive),-0.09 (inconclusive)
+pisa λ0.0,3,0.7986,0.8986,12.0278,-0.1438,-0.5251,0.9823,10.272,-3.6825,10.7821,2.2731,-0.20 (inconclusive),-0.27 (inconclusive),-0.11 (inconclusive),+3.79 (useful)
+pisa λ0.0,4,0.7919,0.8995,10.4985,-0.3024,-0.4688,0.982,10.4502,-3.5941,12.9304,2.2675,+0.57 (useful),+0.03 (inconclusive),+0.16 (inconclusive),+0.07 (inconclusive)
+osdhuman,3,0.6567,0.8037,0.4683,1.5346,-0.9486,0.9751,15.3944,-0.2313,11.2603,3.4857,+0.73 (useful),-0.57 (harmful),-0.74 (harmful),+3.27 (useful)
+osdhuman,4,0.6459,0.8027,0.0408,1.6197,-0.894,0.9747,16.5747,0.3696,11.6476,3.4847,+1.55 (useful),-0.03 (inconclusive),-0.32 (inconclusive),-0.61 (harmful)

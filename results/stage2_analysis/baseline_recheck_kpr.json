@@ -1,0 +1,1 @@
+{"model": "kpr", "input": "384x128", "mAP": 89.58, "rank1": 95.87, "ref_mAP": 89.59, "ref_rank1": 95.87, "n_query_valid": 3368, "n_gallery": 15913, "pass": false}

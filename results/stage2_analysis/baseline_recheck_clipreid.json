@@ -1,0 +1,1 @@
+{"model": "clipreid", "input": "256x128", "mAP": 89.65, "rank1": 95.37, "ref_mAP": 89.66, "ref_rank1": 95.43, "n_query_valid": 3368, "n_gallery": 15913, "pass": false}

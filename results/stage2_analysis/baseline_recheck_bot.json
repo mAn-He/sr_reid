@@ -1,0 +1,1 @@
+{"model": "bot", "input": "256x128", "mAP": 85.95, "rank1": 94.63, "ref_mAP": 85.95, "ref_rank1": 94.63, "n_query_valid": 3368, "n_gallery": 15913, "pass": true}
