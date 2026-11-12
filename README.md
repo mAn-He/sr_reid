@@ -348,14 +348,42 @@ A-FINE 10분위별 평균 ΔAP_q: 분위에 따른 뚜렷한 경향 없이, 모�
 
 ### 7.4 성공·실패 사례
 
-OSDHuman ×4에서 4개 모델 평균 ΔAP_q 기준 가장 손해 본 query와 가장 이득 본 query. 각 줄: query(원본 | bicubic | SR), BoT C·S top-5, KPR+SOLIDER C·S top-5. 초록 = 정답, 빨강 = 오답.
+SR 조건·배율마다 4개 모델 평균 ΔAP_q 기준으로 가장 손해 본 query 5개와 가장 이득 본 query 5개의 top-10 검색 결과를 만들고, 그중 해석에 도움이 되는 4개를 발췌함. 각 그림의 네 줄은 BoT C(bicubic 모델 + bicubic test), BoT S(SR 모델 + SR test), KPR+SOLIDER C, KPR+SOLIDER S. 파란 테두리 = query, 초록 = 같은 사람, 빨강 = 다른 사람. Market 규칙대로 같은 사람·같은 카메라 이미지는 제외.
 
-![최악 사례](docs/readme/stage2_case_osdhuman_x4_worst.jpg)
+**① 실패: 같은 조건의 다른 사람이 상위를 차지 (OSDHuman ×4, 평균 ΔAP −66.1%p)**
 
-![최선 사례](docs/readme/stage2_case_osdhuman_x4_best.jpg)
+![OSDHuman x4 손해 사례](docs/readme/top10_osdhuman_x4_loss.jpg)
+
+- BoT는 AP 100 → 8.2(첫 정답 13위), KPR+SOLIDER는 100 → 39.3으로 하락
+- SR 이후 상위가 노란 상의에 자전거를 탄 다른 사람들(722, 725, 71번 등)로 채워짐. 생성형 SR이 질감을 비슷하게 다시 그려, 원본에서 구분되던 미세한 차이가 줄어든 경우로 해석
+
+**② 성공: 흐린 query가 배경·방해 이미지와 구분됨 (OSDHuman ×4, 평균 ΔAP +43.0%p)**
+
+![OSDHuman x4 이득 사례](docs/readme/top10_osdhuman_x4_gain.jpg)
+
+- BoT는 AP 59.1 → 100, KPR+SOLIDER는 3.8(첫 정답 22위) → 100
+- bicubic에서는 흐린 query가 사람이 거의 없는 방해 이미지(0번)와 가깝게 매칭됐고, SR 이후 정답 2장이 1·2위로 올라옴
+
+**③ 성공: 옷이 거의 같은 두 사람의 구분 (PiSA-SR λ0.0 ×4, 평균 ΔAP +25.6%p)**
+
+![PiSA x4 이득 사례](docs/readme/top10_pisa_x4_gain.jpg)
+
+- 빨간 상의를 입은 1308번 query가 bicubic에서는 비슷한 옷의 1307번과 섞임(BoT AP 28.3, 첫 정답 3위). SR 이후 BoT·KPR+SOLIDER 모두 AP 100
+- 반대로 같은 두 사람이 SwinIR ×4 손해 사례에서는 서로 혼동되는 쪽으로 나타남. 같은 사람 쌍에서도 SR 방법에 따라 결과가 갈림
+
+**④ SR 효과가 아니라 기준 모델 문제로 보이는 사례 (SwinIR ×3, 평균 ΔAP +24.0%p)**
+
+![SwinIR x3 약수렴 기준 모델](docs/readme/top10_swinir_x3_weak_baseline.jpg)
+
+- BoT는 C 100, S 98로 거의 같음. SwinIR은 원본을 거의 바꾸지 않는 방법임(PersonViT 코사인 0.993)
+- 그런데 KPR+SOLIDER C만 AP 1.5(첫 정답 72위)로 실패하고 S는 99.8. 차이의 대부분이 SR이 아니라 **약하게 수렴한 KPR+SOLIDER ×3 bicubic 기준 모델**에서 옴
+- ×3의 다른 이득 사례에서도 KPR+SOLIDER C의 AP가 1.5~14%대로 낮은 경우가 반복됨. 6.1절 ※ 표시의 근거
+
+**정리**
 
 - 손해 사례 20개의 PersonViT 코사인 평균 0.62, 이득 사례 0.75로 **극단 사례에서는** 사람 특징이 많이 바뀐 query가 손해(평균 차이일 뿐 개별 예측력은 7.3절대로 약함)
-- 위 손해 사례에서는 SR이 체크무늬·얼굴 등 세부를 다르게 그린 뒤 비슷한 옷의 다른 사람이 상위에 오는 모습이 보임(사례 일부를 눈으로 본 관찰)
+- SR의 효과는 "선명해져서 구분이 쉬워짐"(②)과 "다시 그려져서 비슷해짐"(①)이 query마다 반대로 작용하며, 평균하면 대부분 상쇄됨
+- 사례 해석은 일부 그림을 눈으로 본 관찰이며 정량 근거는 6·7절의 수치
 
 ---
 
